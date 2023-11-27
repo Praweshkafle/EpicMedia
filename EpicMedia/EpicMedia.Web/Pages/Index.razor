@@ -1,9 +1,44 @@
 ﻿@page "/"
 
-<PageTitle>Index</PageTitle>
+<div class="container post-container mt-5 mb-5">
+    <div class="row justify-content-center">
+        <div class="card col-md-6 p-3" style="background:#f1f1f1">
 
-<h1>Hello, world!</h1>
+            <!-- Post Header -->
+            <div class="post-header d-flex mb-2">
+                <img src="https://placekitten.com/50/50" alt="User Avatar" class="user-avatar rounded-circle">
+                <div style="margin-left:10px">
+                    <h6 class="mb-0">Username</h6>
+                    <small class="text-muted">Location</small>
+                </div>
+            </div>
 
-Welcome to your new app.
+            <!-- Post Image -->
+            <img src="https://placekitten.com/600/400" alt="Post Image" class="post-image">
 
-<SurveyPrompt Title="How is Blazor working for you?" />
+            <!-- Post Footer (Engagement buttons, comments, etc.) -->
+            <div class="post-footer">
+                <!-- Engagement buttons (e.g., like, comment) -->
+                <div class="d-flex justify-content-between">
+                    <div class="m-2 ">
+                        <i class="fa fa-heart-o" style="font-size:24px; margin-right:10px"></i> 
+                        <i class="fa fa-comments-o" style="font-size:24px"></i>
+                    </div>
+                    <button type="button" class="btn btn-link"><i class="bi-bookmark"></i></button>
+                </div>
+
+                <!-- Comments section -->
+                <div>
+                    <p><strong>Username:</strong> This is an amazing photo!</p>
+                    <p><strong>AnotherUser:</strong> Nice shot!</p>
+                    <!-- Add more comments as needed -->
+                </div>
+            </div>
+            <!-- Add a comment form -->
+            <div class="mb-3 d-flex">
+                <input type="text" class="form-control w-100" placeholder="Add a comment...">
+                <button type="button" class="btn btn-success btn-sm w-25">Post</button>
+            </div>
+        </div>
+    </div>
+</div>
