@@ -1,6 +1,356 @@
 ﻿@page "/"
+<style>
 
-<div class="container post-container mt-5 mb-5">
+    /*body{
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+      background: linear-gradient(#00C6FF, #0078FF);
+    }*/
+    ::selection {
+        color: #fff;
+        background: #1a81ff;
+    }
+
+    .container-modal {
+        width: 500px;
+        height: 480px;
+        overflow: hidden;
+        background: #fff;
+        border-radius: 10px;
+        transition: height 0.2s ease;
+        box-shadow: 0 12px 28px rgba(0, 0, 0, 0.12);
+    }
+
+        .container-modal.active {
+            height: 590px;
+        }
+
+        .container-modal .wrapper {
+            width: 1000px;
+            display: flex;
+        }
+
+            .container-modal .wrapper section {
+                width: 500px;
+                background: #fff;
+            }
+
+        .container-modal img {
+            cursor: pointer;
+        }
+
+        .container-modal .post {
+            transition: margin-left 0.18s ease;
+        }
+
+        .container-modal.active .post {
+            margin-left: -500px;
+        }
+
+    .post header {
+        font-size: 22px;
+        font-weight: 600;
+        padding: 17px 0;
+        text-align: center;
+        border-bottom: 1px solid #bfbfbf;
+    }
+
+    .post form {
+        margin: 20px 25px;
+    }
+
+        .post form .content,
+        .audience .list li .column {
+            display: flex;
+            align-items: center;
+        }
+
+            .post form .content img {
+                cursor: default;
+                max-width: 52px;
+            }
+
+            .post form .content .details {
+                margin: -3px 0 0 12px;
+            }
+
+    form .content .details p {
+        font-size: 17px;
+        font-weight: 500;
+    }
+
+    .content .details .privacy {
+        display: flex;
+        height: 25px;
+        cursor: pointer;
+        padding: 0 10px;
+        font-size: 11px;
+        margin-top: 3px;
+        border-radius: 5px;
+        align-items: center;
+        max-width: 98px;
+        background: #E4E6EB;
+        justify-content: space-between;
+    }
+
+    .details .privacy span {
+        font-size: 13px;
+        margin-top: 1px;
+        font-weight: 500;
+    }
+
+    .details .privacy i:last-child {
+        font-size: 13px;
+        margin-left: 1px;
+    }
+
+    form :where(textarea, button) {
+        width: 100%;
+        outline: none;
+        border: none;
+    }
+
+    form textarea {
+        resize: none;
+        font-size: 18px;
+        margin-top: 30px;
+        min-height: 100px;
+    }
+
+        form textarea::placeholder {
+            color: #858585;
+        }
+
+        form textarea:focus::placeholder {
+            color: #b3b3b3;
+        }
+
+    form :where(.theme-emoji, .options) {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+    }
+
+    .theme-emoji img:last-child {
+        max-width: 24px;
+    }
+
+    form .options {
+        height: 57px;
+        margin: 15px 0;
+        padding: 0 15px;
+        border-radius: 7px;
+        border: 1px solid #B9B9B9;
+        box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+    }
+
+        form .options :where(.list, li),
+        .audience :where(.arrow-back, .icon, li .radio) {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        form .options p {
+            color: #595959;
+            font-size: 15px;
+            font-weight: 500;
+            cursor: default;
+        }
+
+        form .options .list {
+            list-style: none;
+        }
+
+    .options .list li {
+        height: 42px;
+        width: 42px;
+        margin: 0 -1px;
+        cursor: pointer;
+        border-radius: 50%;
+    }
+
+        .options .list li:hover {
+            background: #f0f1f4;
+        }
+
+        .options .list li img {
+            width: 23px;
+        }
+
+    form button {
+        height: 53px;
+        color: #fff;
+        font-size: 18px;
+        font-weight: 500;
+        cursor: pointer;
+        color: #BCC0C4;
+        cursor: no-drop;
+        border-radius: 7px;
+        background: #e2e5e9;
+        transition: all 0.3s ease;
+    }
+
+    form textarea:valid ~ button {
+        color: #fff;
+        cursor: pointer;
+        background: #4599FF;
+    }
+
+        form textarea:valid ~ button:hover {
+            background: #1a81ff;
+        }
+
+</style>
+<style>
+    .postcontainer {
+        max-width: 650px;
+        margin: 20px auto;
+        background-color: #fff;
+        border: 1px solid #ddd;
+        border-radius: 8px;
+        padding: 15px;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    }
+
+    .post-input {
+        width: 100%;
+        margin-bottom: 15px;
+    }
+
+    .post-actions {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    .post-avatar {
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        margin-right: 10px;
+    }
+
+     .story-carousel-container {
+            max-width: 600px;
+            margin: 20px auto;
+        }
+
+        .story-carousel .carousel-inner img {
+            width: 100%;
+            height: auto;
+        }
+
+        .carousel-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            padding: 10px;
+            box-sizing: border-box;
+        }
+
+        .carousel-username {
+            color: #fff;
+            font-weight: bold;
+        }
+
+        .carousel-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            margin-right: 10px;
+        }
+   
+</style>
+
+
+<!-- Modal -->
+<div class="modal fade" id="exampleModalCenter" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="container-modal">
+                <div class="wrapper">
+                    <section class="post">
+                        <header>Create Post</header>
+                        <form action="#">
+                            <div class="content">
+                                <img src="https://placekitten.com/50/50" alt="logo">
+                                <div class="details">
+                                    <p>EpicMedia</p>
+                                </div>
+                            </div>
+                            <textarea placeholder="What's on your mind, EpicMedia?" spellcheck="false" required></textarea>
+                            <div class="options align-items-center">
+                                <p>Add to Your Post</p>
+                                <i class="fa fa-image"></i>
+                            </div>
+                            <button>Post</button>
+                        </form>
+                    </section>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+<div class="container story-carousel-container">
+    <div id="storyCarousel" class="carousel slide"  data-ride="carousel">
+        <div class="carousel-inner mx-auto">
+            <div class="carousel-item active" >
+                <img src="https://placekitten.com/600/300" alt="Story 1">
+                <div class="carousel-overlay">
+                    <div class="carousel-info">
+                        <img src="https://placekitten.com/40/40" alt="Avatar" class="carousel-avatar">
+                        <p class="carousel-username">User1</p>
+                    </div>
+                </div>
+            </div>
+            <div class="carousel-item" style="width:100px">
+                <img src="https://placekitten.com/600/301" alt="Story 2">
+                <div class="carousel-overlay">
+                    <div class="carousel-info">
+                        <img src="https://placekitten.com/40/41" alt="Avatar" class="carousel-avatar">
+                        <p class="carousel-username">User2</p>
+                    </div>
+                </div>
+            </div>
+            <!-- Add more carousel items as needed -->
+        </div>
+        <a class="carousel-control-prev" href="#storyCarousel" role="button" data-slide="prev">
+            <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+            <span class="sr-only">Previous</span>
+        </a>
+        <a class="carousel-control-next" href="#storyCarousel" role="button" data-slide="next">
+            <span class="carousel-control-next-icon" aria-hidden="true"></span>
+            <span class="sr-only">Next</span>
+        </a>
+    </div>
+</div>
+
+<div class="container">
+    <div class="postcontainer">
+        <textarea class="form-control post-input" rows="3" placeholder="What's on your mind?"></textarea>
+
+        <div class="post-actions">
+            <div>
+                <label for="imageUpload" class="btn btn-outline-primary">Upload Image</label>
+                <input type="file" id="imageUpload" style="display:none">
+            </div>
+            <button class="btn btn-primary" data-toggle="modal" data-target="#exampleModalCenter">Post</button>
+        </div>
+    </div>
+</div>
+
+
+<div class="container post-container mt-1 mb-2">
     <div class="row justify-content-center">
         <div class="card col-md-6 p-3" style="background:#f1f1f1">
 
@@ -21,7 +371,7 @@
                 <!-- Engagement buttons (e.g., like, comment) -->
                 <div class="d-flex justify-content-between">
                     <div class="m-2 ">
-                        <i class="fa fa-heart-o" style="font-size:24px; margin-right:10px"></i> 
+                        <i class="fa fa-heart-o" style="font-size:24px; margin-right:10px"></i>
                         <i class="fa fa-comments-o" style="font-size:24px"></i>
                     </div>
                     <button type="button" class="btn btn-link"><i class="bi-bookmark"></i></button>
