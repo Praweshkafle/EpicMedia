@@ -7,11 +7,15 @@ namespace EpicMedia.Api.Repository.Implementation
 {
     public class UserRepository:IUserRepository
     {
+        private readonly MongoClient Client;
+        private readonly IMongoDatabase DB;
         private readonly IMongoCollection<User> _collection;
 
-        public UserRepository(IMongoDatabase database)
+        public UserRepository(IConfiguration configuration)
         {
-            _collection = database.GetCollection<User>("Users");
+            Client = new MongoClient(configuration["MyKey"]);
+            DB = Client.GetDatabase("EpicMedia");
+            _collection = DB.GetCollection<User>("User");
         }
 
         public async Task<IEnumerable<User>> GetAll()
