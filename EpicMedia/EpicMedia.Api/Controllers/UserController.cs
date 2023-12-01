@@ -6,7 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace EpicMedia.Api.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("api/user")]
     [ApiController]
     public class UserController : ControllerBase
     {
@@ -16,6 +16,7 @@ namespace EpicMedia.Api.Controllers
             _userRepository = userRepository;
         }
         [HttpPost]
+        [Route("register")]
         public async Task<ActionResult<UserDto>> Register([FromBody] UserDto userDto)
         {
             try
