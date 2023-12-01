@@ -19,15 +19,12 @@ namespace EpicMedia.Api
 
         public void ConfigureServices(IServiceCollection services)
         {
-            var mongoClient = new MongoClient("your_mongo_db_connection_string");
-            var database = mongoClient.GetDatabase("EpicMedia");
-
-
-            services.AddSingleton<IMongoDatabase>(database);
+            
             services.AddScoped<IUserRepository, UserRepository>();
 
 
             services.AddControllers();
+            services.AddEndpointsApiExplorer();
             services.AddSwaggerGen();
 
             services.AddAuthentication(options =>
@@ -62,12 +59,13 @@ namespace EpicMedia.Api
             }
             app.UseStatusCodePagesWithReExecute("/error/{0}");
             app.UseCors(policy =>
-policy.WithOrigins("https://localhost:44302", "http://localhost:44302")
+policy.WithOrigins("https://localhost:44351", "http://localhost:44351")
 .AllowAnyMethod()
 .WithHeaders(HeaderNames.ContentType)
 );
-            app.UseAuthentication();
+            app.UseHttpsRedirection();
             app.UseAuthorization();
+            app.MapControllers();
             app.Run();
         }
     }
