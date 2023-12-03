@@ -46,7 +46,6 @@ namespace EpicMedia.Web.Pages
             }
             catch (Exception)
             {
-
                 throw;
             }
         }
