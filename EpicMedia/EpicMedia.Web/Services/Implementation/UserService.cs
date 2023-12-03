@@ -18,9 +18,27 @@ namespace EpicMedia.Web.Services.Implementation
         {
             try
             {
-                var jsonResult = JsonConvert.SerializeObject(userDto);
-                var content = new StringContent(jsonResult, Encoding.UTF8, "application/json");
-                var response = await _httpClient.PostAsync(("api/user/register"), content);
+                var response = await _httpClient.PostAsJsonAsync<UserDto>(("api/user/register"), userDto);
+                if (response.IsSuccessStatusCode)
+                {
+                    return true;
+                }
+                else
+                {
+                    return false;
+                }
+            }
+            catch (Exception ex)
+            {
+                throw;
+            }
+        }
+
+        public async Task<bool> LoginUser(LoginDto loginDto)
+        {
+            try
+            {
+                var response = await _httpClient.PostAsJsonAsync<LoginDto>(("api/user/login"), loginDto);
                 if (response.IsSuccessStatusCode)
                 {
                     return true;
