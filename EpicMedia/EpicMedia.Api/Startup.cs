@@ -1,5 +1,6 @@
 ﻿using EpicMedia.Api.Repository.Implementation;
 using EpicMedia.Api.Repository.Interface;
+using EpicMedia.Api.Settings;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.Net.Http.Headers;
 using MongoDB.Driver;
@@ -19,35 +20,11 @@ namespace EpicMedia.Api
 
         public void ConfigureServices(IServiceCollection services)
         {
-            
             services.AddScoped<IUserRepository, UserRepository>();
-
-
             services.AddControllers();
             services.AddEndpointsApiExplorer();
             services.AddSwaggerGen();
-
-            services.AddAuthentication(options =>
-            {
-                options.DefaultChallengeScheme = CookieAuthenticationDefaults.AuthenticationScheme;
-                options.DefaultSignInScheme = CookieAuthenticationDefaults.AuthenticationScheme;
-                options.DefaultAuthenticateScheme = CookieAuthenticationDefaults.AuthenticationScheme;
-            })
-          .AddCookie(CookieAuthenticationDefaults.AuthenticationScheme, options =>
-          {
-              options.Cookie.HttpOnly = false;
-              options.SlidingExpiration = true;
-              options.ExpireTimeSpan = TimeSpan.FromMinutes(30);
-              options.LoginPath = "/login";
-              options.LogoutPath = "/logout";
-              options.AccessDeniedPath = "/error";
-          });
-            services.AddAuthorization();
-
-            services.AddCors(c =>
-            {
-                c.AddPolicy("AllowOrigin", options => options.AllowAnyOrigin());
-            });
+            services.Configure<TokenSettings>(Configuration.GetSection(nameof(TokenSettings)));
         }
 
         public void Configure(WebApplication app, IWebHostEnvironment env)
@@ -59,7 +36,7 @@ namespace EpicMedia.Api
             }
             app.UseStatusCodePagesWithReExecute("/error/{0}");
             app.UseCors(policy =>
-policy.WithOrigins("https://localhost:44351", "http://localhost:44351")
+policy.WithOrigins("https://localhost:7118", "http://localhost:7118")
 .AllowAnyMethod()
 .WithHeaders(HeaderNames.ContentType)
 );

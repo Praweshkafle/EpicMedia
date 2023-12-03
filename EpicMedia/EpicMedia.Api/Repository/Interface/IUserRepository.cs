@@ -7,7 +7,8 @@ namespace EpicMedia.Api.Repository.Interface
     {
         Task<IEnumerable<User>> GetAll();
         Task<User> GetById(ObjectId id);
-        Task<User> GetByEmail(string email);
+        Task<User> GetByEmail(string username); 
+        Task<User> GetByUserName(string email);
         Task Create(User user);
         Task<bool> Update(ObjectId id, User user);
         Task<bool> Delete(ObjectId id);

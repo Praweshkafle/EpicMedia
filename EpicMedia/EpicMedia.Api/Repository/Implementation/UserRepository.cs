@@ -49,5 +49,10 @@ namespace EpicMedia.Api.Repository.Implementation
             var result = await _collection.DeleteOneAsync(u => u.Id == id);
             return result.DeletedCount > 0;
         }
+
+        public async Task<User> GetByUserName(string username)
+        {
+            return await _collection.Find(u => u.Username == username).FirstOrDefaultAsync();
+        }
     }
 }
