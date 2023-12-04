@@ -33,7 +33,7 @@ namespace EpicMedia.Web.Pages
                     throw new Exception("Unable to Login!!!");
                 }
                 var result = await UserService.LoginUser(userDto);
-                if (result)
+                if (result.isValid)
                 {
                     navigationManager.NavigateTo("/");
                 }
