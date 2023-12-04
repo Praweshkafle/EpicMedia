@@ -46,7 +46,8 @@ namespace EpicMedia.Api.Controllers
                     await _userRepository.Create(user);
                     return StatusCode(StatusCodes.Status200OK,"user created");
                 }
-                return BadRequest();
+                ModelState.AddModelError("Register Error", "Invalid Credentials");
+                return BadRequest(ModelState);
             }
             catch (Exception ex)
             {
@@ -73,13 +74,7 @@ namespace EpicMedia.Api.Controllers
                 throw new Exception(ex.Message);
             }
         }
-        [HttpGet]
-        [Route("logout")]
-        public async Task<IActionResult> logout()
-        {
-            await HttpContext.SignOutAsync();
-            return Redirect("/login");
-        }
+       
         private async Task<User> ValidateUser(string username, string password)
         {
             var user = await _userRepository.GetByUserName(username);
