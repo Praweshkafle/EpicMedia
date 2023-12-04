@@ -1,5 +1,7 @@
 ﻿using EpicMedia.Api.Repository.Implementation;
 using EpicMedia.Api.Repository.Interface;
+using EpicMedia.Api.Services.Implementation;
+using EpicMedia.Api.Services.Interface;
 using EpicMedia.Api.Settings;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.Net.Http.Headers;
@@ -21,6 +23,7 @@ namespace EpicMedia.Api
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddScoped<IUserRepository, UserRepository>();
+            services.AddScoped<IUserService, UserService>();
             services.AddControllers();
             services.AddEndpointsApiExplorer();
             services.AddSwaggerGen();
