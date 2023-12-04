@@ -1,9 +1,8 @@
 ﻿using EpicMedia.Models.Dto;
 using EpicMedia.Web.Services.Interface;
-using Newtonsoft.Json;
-using System.Net.Http;
 using System.Net.Http.Json;
 using System.Text;
+using System.Text.Json;
 
 namespace EpicMedia.Web.Services.Implementation
 {
@@ -34,18 +33,38 @@ namespace EpicMedia.Web.Services.Implementation
             }
         }
 
-        public async Task<bool> LoginUser(LoginDto loginDto)
+        public async Task<(bool isValid, string ErrorMessage)> LoginUser(LoginDto loginDto)
         {
             try
             {
-                var response = await _httpClient.PostAsJsonAsync<LoginDto>(("api/user/login"), loginDto);
-                if (response.IsSuccessStatusCode)
+                var jsonPayload = JsonSerializer.Serialize(loginDto);
+                var requestContent = new StringContent(jsonPayload, Encoding.UTF8, "application/json");
+
+                var response = await _httpClient.PostAsync("api/user/login", requestContent);
+
+                if (response.StatusCode == System.Net.HttpStatusCode.BadRequest)
                 {
-                    return true;
+                    var errors = await response.Content.ReadFromJsonAsync<Dictionary<string, List<string>>>();
+                    var message = "";
+                    if (errors.Count > 0)
+                    {
+                        foreach (var item in errors)
+                        {
+                            foreach (var errorMessage in item.Value)
+                            {
+                                message = $"{message} | {errorMessage}";
+                            }
+                        }
+                    }
+                    return (false, message);
+                }
+                else if (response.StatusCode == System.Net.HttpStatusCode.OK)
+                {
+                    return (true,"Successfully LoggedIn");
                 }
                 else
                 {
-                    return false;
+                    return (false, "Error Logging IN");
                 }
             }
             catch (Exception ex)
