@@ -1,5 +1,6 @@
 ﻿using EpicMedia.Models.Dto;
 using EpicMedia.Web.Services.Interface;
+using EpicMedia.Web.ViewModels;
 using System.Net.Http.Json;
 using System.Text;
 using System.Text.Json;
@@ -33,7 +34,7 @@ namespace EpicMedia.Web.Services.Implementation
             }
         }
 
-        public async Task<(bool isValid, string ErrorMessage)> LoginUser(LoginDto loginDto)
+        public async Task<(JwtTokenResponse? jwtTokenResponse, string ErrorMessage)> LoginUser(LoginDto loginDto)
         {
             try
             {
@@ -56,15 +57,16 @@ namespace EpicMedia.Web.Services.Implementation
                             }
                         }
                     }
-                    return (false, message);
+                    return (null, message);
                 }
                 else if (response.StatusCode == System.Net.HttpStatusCode.OK)
                 {
-                    return (true,"Successfully LoggedIn");
+                    var token = await response.Content.ReadFromJsonAsync<JwtTokenResponse>();
+                    return (token,"Successfully LoggedIn");
                 }
                 else
                 {
-                    return (false, "Error Logging IN");
+                    return (null, "Error Logging IN");
                 }
             }
             catch (Exception ex)
