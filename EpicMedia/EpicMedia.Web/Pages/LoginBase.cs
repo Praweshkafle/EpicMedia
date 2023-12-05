@@ -1,7 +1,11 @@
-﻿using EpicMedia.Models.Dto;
+﻿using Blazored.LocalStorage;
+using EpicMedia.Models.Dto;
 using EpicMedia.Web.Services.Implementation;
 using EpicMedia.Web.Services.Interface;
+using EpicMedia.Web.Shared.Manager;
+using EpicMedia.Web.ViewModels;
 using Microsoft.AspNetCore.Components;
+using Microsoft.AspNetCore.Components.Authorization;
 
 namespace EpicMedia.Web.Pages
 {
@@ -13,6 +17,11 @@ namespace EpicMedia.Web.Pages
         public IUserService UserService { get; set; }
         [Inject]
         public NavigationManager navigationManager { get; set; }
+        [Inject]
+        public ILocalStorageService localStorageService { get; set; }
+
+        [Inject]
+        public AuthenticationStateProvider _authenticationStateProvider { get; set; }
 
         protected override Task OnInitializedAsync()
         {
@@ -33,9 +42,11 @@ namespace EpicMedia.Web.Pages
                     throw new Exception("Unable to Login!!!");
                 }
                 var result = await UserService.LoginUser(userDto);
-                if (result.isValid)
+                if (!string.IsNullOrEmpty(result.token?.accessToken))
                 {
-                    navigationManager.NavigateTo("/");
+                   await localStorageService.SetItemAsync<string>("jwt-access-token",result.token.accessToken);
+                    (_authenticationStateProvider as CustomAuthProvider)?.NotifyAuthState();
+                    //navigationManager.NavigateTo("/");
                 }
             }
             catch (Exception)
