@@ -4,8 +4,11 @@ using EpicMedia.Api.Services.Implementation;
 using EpicMedia.Api.Services.Interface;
 using EpicMedia.Api.Settings;
 using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.IdentityModel.Tokens;
 using Microsoft.Net.Http.Headers;
 using MongoDB.Driver;
+using System.Text;
 
 namespace EpicMedia.Api
 {
@@ -28,6 +31,22 @@ namespace EpicMedia.Api
             services.AddEndpointsApiExplorer();
             services.AddSwaggerGen();
             services.Configure<TokenSettings>(Configuration.GetSection(nameof(TokenSettings)));
+
+            services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+                    .AddJwtBearer(options =>
+                    {
+                        var tokenSettings= Configuration.GetSection(nameof(TokenSettings)).Get<TokenSettings>();
+                        options.TokenValidationParameters = new Microsoft.IdentityModel.Tokens.TokenValidationParameters
+                        {
+                            ValidateIssuer = true,
+                            ValidIssuer = tokenSettings.Issuer,
+                            ValidateAudience = true,
+                            ValidAudience = tokenSettings.Audience,
+                            ValidateIssuerSigningKey = true,
+                            IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(tokenSettings.SecretKey)),
+                            ClockSkew = TimeSpan.Zero
+                        };
+                    });
         }
 
         public void Configure(WebApplication app, IWebHostEnvironment env)
