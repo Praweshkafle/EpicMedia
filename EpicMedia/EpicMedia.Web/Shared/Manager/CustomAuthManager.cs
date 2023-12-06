@@ -21,7 +21,7 @@ namespace EpicMedia.Web.Shared.Manager
 
             var jwtToken = await _localStorageService.GetItemAsync<string>("jwt-access-token");
 
-            if (!string.IsNullOrEmpty(jwtToken))
+            if (string.IsNullOrEmpty(jwtToken))
             {
                 return new AuthenticationState(new System.Security.Claims.ClaimsPrincipal(new ClaimsIdentity()));
             }
