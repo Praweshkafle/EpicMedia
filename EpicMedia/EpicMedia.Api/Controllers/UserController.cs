@@ -74,20 +74,6 @@ namespace EpicMedia.Api.Controllers
                 throw new Exception(ex.Message);
             }
         }
-       
-        private async Task<User> ValidateUser(string username, string password)
-        {
-            var user = await _userRepository.GetByUserName(username);
-            if (user == null)
-            {
-                return null;
-            }
-            if (!(password == user.Password))
-            {
-                return null;
-            }
-            return user;
-        }
 
         private async Task<User> IsDuplicate(string username, string email)
         {
