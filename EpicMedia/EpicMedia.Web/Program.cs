@@ -11,11 +11,17 @@ var builder = WebAssemblyHostBuilder.CreateDefault(args);
 builder.RootComponents.Add<App>("#app");
 builder.RootComponents.Add<HeadOutlet>("head::after");
 
-builder.Services.AddScoped(sp => new HttpClient { BaseAddress = new Uri("https://localhost:7270/") });
+//builder.Services.AddScoped(sp => new HttpClient { BaseAddress = new Uri("https://localhost:7270/") });
+
+builder.Services.AddHttpClient("EpicMediaApi", options =>
+{
+    options.BaseAddress = new Uri("https://localhost:7270/");
+});
+
 builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddBlazoredLocalStorage();
 builder.Services.AddScoped<AuthenticationStateProvider, CustomAuthProvider>();
 builder.Services.AddAuthorizationCore();
 
-
+builder.Services.AddScoped<CustomHttpHandler>();
 await builder.Build().RunAsync();
