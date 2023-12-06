@@ -1,6 +1,29 @@
-﻿<nav class="navbar navbar-light bg-light sticky-top">
+﻿@using System.Security.Claims;
+<nav class="navbar navbar-light bg-light sticky-top">
     <div class="container-fluid">
         <a class="navbar-brand mx-5">EpicMedia</a>
-        <a href="#"><i class="fa fa-sign-out fa-lg" aria-hidden="true"></i></a>
+        <AuthorizeView>
+            <Authorized>
+                <div>
+                    <a class="navbar-brand mx-5">Welcome, @GetUserName(context.User.Claims.ToList())</a>
+                    <a href="#"><i class="fa fa-sign-out fa-lg" aria-hidden="true"></i></a>
+                </div>
+            </Authorized>
+            <NotAuthorized>
+                <a href="/login" class="navbar-brand mx-5">Register/Login</a>
+            </NotAuthorized>
+        </AuthorizeView>
+
     </div>
 </nav>
+@code {
+    string GetUserName(List<Claim> claims)
+    {
+        var userName = claims.Where(a => a.Type == "UserName").Select(b => b.Value).FirstOrDefault();
+        if (!string.IsNullOrEmpty(userName))
+        {
+            return $"{userName}";
+        }
+        return "";
+    }
+}
