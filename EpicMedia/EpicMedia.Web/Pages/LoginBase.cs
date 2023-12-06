@@ -42,11 +42,11 @@ namespace EpicMedia.Web.Pages
                     throw new Exception("Unable to Login!!!");
                 }
                 var result = await UserService.LoginUser(userDto);
-                if (!string.IsNullOrEmpty(result.token?.accessToken))
+                if (!string.IsNullOrEmpty(result.jwtTokenResponse?.accessToken))
                 {
-                   await localStorageService.SetItemAsync<string>("jwt-access-token",result.token.accessToken);
+                   await localStorageService.SetItemAsync<string>("jwt-access-token",result.jwtTokenResponse.accessToken);
                     (_authenticationStateProvider as CustomAuthProvider)?.NotifyAuthState();
-                    //navigationManager.NavigateTo("/");
+                    navigationManager.NavigateTo("/");
                 }
             }
             catch (Exception)
