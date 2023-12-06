@@ -9,19 +9,26 @@ namespace EpicMedia.Web.Services.Implementation
 {
     public class UserService : IUserService
     {
-        private readonly HttpClient _httpClient;
-        public UserService(HttpClient httpClient)
+        private readonly IHttpClientFactory _httpClientFac;
+        public UserService(IHttpClientFactory httpClientFac)
         {
-            _httpClient = httpClient;
+            _httpClientFac = httpClientFac;
         }
         public async Task<bool> AddUser(UserDto userDto)
         {
             try
             {
-                var response = await _httpClient.PostAsJsonAsync<UserDto>(("api/user/register"), userDto);
-                if (response.IsSuccessStatusCode)
+                var _httpClient = _httpClientFac.CreateClient("EpicMediaApi");
+                var jsonPayload = JsonSerializer.Serialize(userDto);
+                var requestContent = new StringContent(jsonPayload, Encoding.UTF8, "application/json");
+                var response = await _httpClient.PostAsync(("api/user/register"), requestContent);
+                if (response.StatusCode == System.Net.HttpStatusCode.BadRequest)
                 {
-                    return true;
+                    return false;
+                }
+                else if(response.StatusCode == System.Net.HttpStatusCode.OK)
+                {
+                    return false;
                 }
                 else
                 {
@@ -38,6 +45,7 @@ namespace EpicMedia.Web.Services.Implementation
         {
             try
             {
+                var _httpClient = _httpClientFac.CreateClient("EpicMediaApi");
                 var jsonPayload = JsonSerializer.Serialize(loginDto);
                 var requestContent = new StringContent(jsonPayload, Encoding.UTF8, "application/json");
 
