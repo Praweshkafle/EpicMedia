@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
 using EpicMedia.Api.Services.Interface;
+using Microsoft.AspNetCore.Authorization;
 
 namespace EpicMedia.Api.Controllers
 {
@@ -44,7 +45,7 @@ namespace EpicMedia.Api.Controllers
                         Username = userDto.Username,
                     };
                     await _userRepository.Create(user);
-                    return StatusCode(StatusCodes.Status200OK,"user created");
+                    return Ok("Registered Successfully <3");
                 }
                 ModelState.AddModelError("Register Error", "Invalid Credentials");
                 return BadRequest(ModelState);
