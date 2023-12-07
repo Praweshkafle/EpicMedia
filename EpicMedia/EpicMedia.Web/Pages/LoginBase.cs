@@ -11,6 +11,8 @@ namespace EpicMedia.Web.Pages
 {
     public class LoginBase:ComponentBase
     {
+        [CascadingParameter]
+        public Task<AuthenticationState> authState { get; set; }
         public string Username { get; set; }
         public string Password { get; set; }
         [Inject]
@@ -23,9 +25,13 @@ namespace EpicMedia.Web.Pages
         [Inject]
         public AuthenticationStateProvider _authenticationStateProvider { get; set; }
 
-        protected override Task OnInitializedAsync()
+        protected override async Task OnInitializedAsync()
         {
-            return base.OnInitializedAsync();
+            var user = (await authState).User;
+            if (user.Identity.IsAuthenticated)
+            {
+                navigationManager.NavigateTo("/");
+            }
         }
 
         protected async void FormSubmit()

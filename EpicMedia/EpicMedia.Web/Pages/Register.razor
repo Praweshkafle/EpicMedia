@@ -1,24 +1,24 @@
 ﻿@page "/register"
-
+@using Microsoft.AspNetCore.Authorization;
 @inherits RegisterBase
-
 <div class="container">
     <div class="row">
         <div class="col-sm-9 col-md-7 col-lg-5 mx-auto">
             <div class="card border-0 shadow rounded-3 my-5">
                 <div class="card-body p-4 p-sm-5">
                     <h5 class="card-title text-center mb-5 fw-light fs-5">Sign In</h5>
-                    <div>
+                    <EditForm Model="RegisterViewModel">
+                        
                         <div class="form-floating mb-3">
-                            <input type="text" class="form-control" @bind="@Username" id="username" placeholder="name@example.com">
+                            <input type="text" class="form-control" @bind-value="@RegisterViewModel.Username" id="username" placeholder="name@example.com">
                             <label for="username">User Name</label>
                         </div>
                         <div class="form-floating mb-3">
-                            <input type="email" class="form-control" @bind="@Email" id="email" placeholder="Password">
+                            <input type="email" class="form-control" @bind-value="@RegisterViewModel.Email" id="email" placeholder="Password">
                             <label for="email">Email</label>
                         </div>
                         <div class="form-floating mb-3">
-                            <input type="password" class="form-control" @bind="@Password" id="password" placeholder="Password">
+                            <input type="password" class="form-control" @bind-value="@RegisterViewModel.Password" id="password" placeholder="Password">
                             <label for="password">Password</label>
                         </div>
                         <div class="form-check mb-3">
@@ -33,7 +33,7 @@
                                 in
                             </button>
                         </div>
-                    </div>
+                    </EditForm>
                 </div>
             </div>
         </div>

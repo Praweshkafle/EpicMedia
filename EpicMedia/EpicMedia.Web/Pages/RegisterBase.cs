@@ -1,6 +1,9 @@
 ﻿using EpicMedia.Models.Dto;
 using EpicMedia.Web.Services.Interface;
+using EpicMedia.Web.ViewModels;
+using EpicMedia.Web.ViewModels.Validation;
 using Microsoft.AspNetCore.Components;
+using Microsoft.AspNetCore.Components.Authorization;
 using System.ComponentModel.DataAnnotations;
 using System.Diagnostics;
 
@@ -8,19 +11,22 @@ namespace EpicMedia.Web.Pages
 {
     public class RegisterBase : ComponentBase
     {
-
-        public string Username { get; set; }
-        public string Email { get; set; }
-        public string Password { get; set; }
-        public string ProfilePicture { get; set; } = "";
+        RegisterValidation validations = new RegisterValidation();
+        [CascadingParameter]
+        public Task<AuthenticationState> authState { get; set; }
+        public RegisterVm RegisterViewModel = new RegisterVm();
         [Inject]
         public IUserService UserService { get; set; }
         [Inject]
         public NavigationManager navigationManager { get; set; }
 
-        protected override Task OnInitializedAsync()
+        protected override async Task OnInitializedAsync()
         {
-            return base.OnInitializedAsync();
+            var user = (await authState).User;
+            if (user.Identity.IsAuthenticated)
+            {
+                navigationManager.NavigateTo("/");
+            }
         }
 
 
@@ -30,9 +36,9 @@ namespace EpicMedia.Web.Pages
             {
                 var userDto = new UserDto()
                 {
-                    Username = Username,
-                    Email = Email,
-                    Password = Password
+                    Username = RegisterViewModel.Username,
+                    Email = RegisterViewModel.Email,
+                    Password = RegisterViewModel.Password
                 };
                 if (userDto == null)
                 {
