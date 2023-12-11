@@ -26,6 +26,7 @@ namespace EpicMedia.Api
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddScoped<IUserRepository, UserRepository>();
+            services.AddScoped<IPostRepository, PostRepository>();
             services.AddScoped<IUserService, UserService>();
             services.AddControllers();
             services.AddEndpointsApiExplorer();
