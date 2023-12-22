@@ -9,12 +9,11 @@ using Microsoft.AspNetCore.Components.Authorization;
 
 namespace EpicMedia.Web.Pages
 {
-    public class LoginBase:ComponentBase
+    public class LoginBase : ComponentBase
     {
         [CascadingParameter]
         public Task<AuthenticationState> authState { get; set; }
-        public string Username { get; set; }
-        public string Password { get; set; }
+        public LoginViewModel loginViewModel = new LoginViewModel();
         [Inject]
         public IUserService UserService { get; set; }
         [Inject]
@@ -40,8 +39,8 @@ namespace EpicMedia.Web.Pages
             {
                 var userDto = new LoginDto()
                 {
-                    UserName = Username,
-                    Password = Password
+                    UserName = loginViewModel.Username,
+                    Password = loginViewModel.Password,
                 };
                 if (userDto == null)
                 {
@@ -50,7 +49,7 @@ namespace EpicMedia.Web.Pages
                 var result = await UserService.LoginUser(userDto);
                 if (!string.IsNullOrEmpty(result.jwtTokenResponse?.accessToken))
                 {
-                   await localStorageService.SetItemAsync<string>("jwt-access-token",result.jwtTokenResponse.accessToken);
+                    await localStorageService.SetItemAsync<string>("jwt-access-token", result.jwtTokenResponse.accessToken);
                     (_authenticationStateProvider as CustomAuthProvider)?.NotifyAuthState();
                     navigationManager.NavigateTo("/");
                 }

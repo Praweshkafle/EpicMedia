@@ -7,28 +7,28 @@
             <div class="card border-0 shadow rounded-3 my-5">
                 <div class="card-body p-4 p-sm-5">
                     <h5 class="card-title text-center mb-5 fw-light fs-5">Sign In</h5>
-                    <EditForm Model="RegisterViewModel">
-                        
+                    <EditForm Model="@RegisterViewModel" OnValidSubmit="FormSubmit">
+                        <DataAnnotationsValidator />
+
                         <div class="form-floating mb-3">
                             <input type="text" class="form-control" @bind-value="@RegisterViewModel.Username" id="username" placeholder="name@example.com">
                             <label for="username">User Name</label>
+                            <ValidationMessage For="@(() => RegisterViewModel.Username)" />
                         </div>
                         <div class="form-floating mb-3">
                             <input type="email" class="form-control" @bind-value="@RegisterViewModel.Email" id="email" placeholder="Password">
                             <label for="email">Email</label>
+                            <ValidationMessage For="@(() => RegisterViewModel.Email)" />
+
                         </div>
                         <div class="form-floating mb-3">
                             <input type="password" class="form-control" @bind-value="@RegisterViewModel.Password" id="password" placeholder="Password">
                             <label for="password">Password</label>
-                        </div>
-                        <div class="form-check mb-3">
-                            <input class="form-check-input" type="checkbox" value="" id="rememberPasswordCheck">
-                            <label class="form-check-label" for="rememberPasswordCheck">
-                                Remember password
-                            </label>
+                            <ValidationMessage For="@(() => RegisterViewModel.Password)" />
+
                         </div>
                         <div class="d-grid">
-                            <button class="btn btn-primary btn-login text-uppercase fw-bold" @onclick="(()=>FormSubmit())" type="button">
+                            <button class="btn btn-primary btn-login text-uppercase fw-bold" type="submit">
                                 Sign
                                 in
                             </button>
