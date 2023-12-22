@@ -1,14 +1,15 @@
 ﻿using EpicMedia.Api.Entity;
 using EpicMedia.Api.Repository.Interface;
 using EpicMedia.Models.Dto;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using MongoDB.Bson;
 
 namespace EpicMedia.Api.Controllers
 {
-    [Route("api/[controller]")]
-    [ApiController]
+    [Authorize]
+    [Route("api/post")]
     public class PostController : ControllerBase
     {
         private readonly IPostRepository _postRepository;
@@ -48,23 +49,23 @@ namespace EpicMedia.Api.Controllers
 
         [HttpPost]
         [Route("comment/{postId}")]
-        public async Task<IActionResult> comment(ObjectId postId, [FromBody] CommentDto commentDto)
+        public async Task<IActionResult> comment([FromBody] CommentDto commentDto,string postId)
         {
             try
             {
-                var post =await _postRepository.GetById(postId);
-                if (post == null) { return BadRequest(new { Sucess = false, Message = "Error occured!" }); }
+                //var post =await _postRepository.GetById(postId);
+                //if (post == null) { return BadRequest(new { Sucess = false, Message = "Error occured!" }); }
 
-                var comment = new Comment
-                {
-                    CreatedAt = DateTime.Now,
-                    Text = commentDto.Text,
-                    User = post.User,
-                };
+                //var comment = new Comment
+                //{
+                //    CreatedAt = DateTime.Now,
+                //    Text = commentDto.Text,
+                //    User = post.User,
+                //};
 
-                post.Comments.Add(comment);
+                //post.Comments.Add(comment);
 
-                var result = await _postRepository.Update(postId,post);
+                //var result = await _postRepository.Update(postId,post);
 
                 return Ok(new { Sucess = true, Message = "Post updated successfully!" });
             }
