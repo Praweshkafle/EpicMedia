@@ -1,4 +1,5 @@
 using Blazored.LocalStorage;
+using Blazored.Modal;
 using EpicMedia.Web;
 using EpicMedia.Web.Services.Implementation;
 using EpicMedia.Web.Services.Interface;
@@ -22,6 +23,6 @@ builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddBlazoredLocalStorage();
 builder.Services.AddScoped<AuthenticationStateProvider, CustomAuthProvider>();
 builder.Services.AddAuthorizationCore();
-
+builder.Services.AddBlazoredModal();
 builder.Services.AddScoped<CustomHttpHandler>();
 await builder.Build().RunAsync();
