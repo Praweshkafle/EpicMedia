@@ -1,4 +1,5 @@
 ﻿@page "/createpost"
+@using EpicMedia.Models.Dto;
 <style>
 
     ::selection {
@@ -209,22 +210,23 @@
                                 <span aria-hidden="true">&times;</span>
                             </button>
                         </div>
-                        <form action="#">
+                        <EditForm Model="@Post" OnValidSubmit="addPost" OnInvalidSubmit="addPost">
                             <div class="content">
                                 <img src="https://placekitten.com/50/50" alt="logo">
                                 <div class="details">
                                     <p>EpicMedia</p>
                                 </div>
                             </div>
-                            <textarea placeholder="What's on your mind, EpicMedia?" spellcheck="false" required></textarea>
+                            <textarea placeholder="What's on your mind, EpicMedia?" spellcheck="false" @bind="@Post.Content" required></textarea>
                             <div class="options align-items-center">
                                 <p>Add to Your Post</p>
-                                <i class="fa fa-image"></i>
+                                <InputFile OnChange="handleFileChange"></InputFile>
+                                <i for="postimg" class="fa fa-image"></i>
                             </div>
                             <div class="modal-footer">
-                                <button type="button" class="btn btn-primary">Post</button>
+                                <button type="submit" class="btn btn-primary">Post</button>
                             </div>
-                        </form>
+                        </EditForm>
                     </section>
                 </div>
             </div>
@@ -235,6 +237,20 @@
 @code{
     [Parameter]
     public EventCallback<bool> OnClose { get; set; }
+    IBrowserFile selectedFile;
+
+
+    public PostDto Post = new PostDto();
+
+    public async Task handleFileChange(InputFileChangeEventArgs eventArgs)
+    {
+        selectedFile = eventArgs.File;
+    }
+
+    public void addPost()
+    {
+        var post = Post; 
+    }
 
     private Task ModalCancle()
     {
