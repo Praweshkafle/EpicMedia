@@ -5,9 +5,9 @@ VisualStudioVersion = 17.5.33516.290
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EpicMedia.Web", "EpicMedia.Web\EpicMedia.Web.csproj", "{AEE449A6-5977-49D8-A3DD-7C0829C0EB35}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EpicMedia.Api", "EpicMedia.Api\EpicMedia.Api.csproj", "{8C753B29-BE1A-4E75-A3F4-7C908AD83DE1}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EpicMedia.Api", "EpicMedia.Api\EpicMedia.Api.csproj", "{8C753B29-BE1A-4E75-A3F4-7C908AD83DE1}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EpicMedia.Models", "EpicMedia.Models\EpicMedia.Models.csproj", "{4458B919-AA5B-4724-8C96-8F0B16430D70}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EpicMedia.Models", "EpicMedia.Models\EpicMedia.Models.csproj", "{4458B919-AA5B-4724-8C96-8F0B16430D70}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
