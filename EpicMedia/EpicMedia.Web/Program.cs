@@ -17,9 +17,10 @@ builder.RootComponents.Add<HeadOutlet>("head::after");
 builder.Services.AddHttpClient("EpicMediaApi", options =>
 {
     options.BaseAddress = new Uri("https://localhost:7270/");
-});
+}).AddHttpMessageHandler<CustomHttpHandler>();
 
 builder.Services.AddScoped<IUserService, UserService>();
+builder.Services.AddScoped<IPostService, PostService>();
 builder.Services.AddBlazoredLocalStorage();
 builder.Services.AddScoped<AuthenticationStateProvider, CustomAuthProvider>();
 builder.Services.AddAuthorizationCore();
