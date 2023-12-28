@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.Net.Http.Headers;
+using Microsoft.OpenApi.Models;
 using MongoDB.Driver;
 using System.Text;
 
@@ -30,7 +31,32 @@ namespace EpicMedia.Api
             services.AddScoped<IUserService, UserService>();
             services.AddControllers();
             services.AddEndpointsApiExplorer();
-            services.AddSwaggerGen();
+            services.AddSwaggerGen(c =>
+            {
+                c.SwaggerDoc("v1", new OpenApiInfo { Title = "Api Key Auth", Version = "v1" });
+                c.AddSecurityDefinition("ApiKey", new OpenApiSecurityScheme
+                {
+                    Description = "ApiKey must appear in header",
+                    Type = SecuritySchemeType.Http,
+                    Name = "XApiKey",
+                    In = ParameterLocation.Header,
+                    Scheme = JwtBearerDefaults.AuthenticationScheme
+                });
+                var key = new OpenApiSecurityScheme()
+                {
+                    Reference = new OpenApiReference
+                    {
+                        Type = ReferenceType.SecurityScheme,
+                        Id = "ApiKey"
+                    },
+                    In = ParameterLocation.Header
+                };
+                var requirement = new OpenApiSecurityRequirement
+                    {
+                             { key, new List<string>() }
+                    };
+                c.AddSecurityRequirement(requirement);
+            });
             services.Configure<TokenSettings>(Configuration.GetSection(nameof(TokenSettings)));
 
             services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
@@ -45,7 +71,8 @@ namespace EpicMedia.Api
                             ValidAudience = tokenSettings.Audience,
                             ValidateIssuerSigningKey = true,
                             IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(tokenSettings.SecretKey)),
-                            ClockSkew = TimeSpan.Zero
+                            ClockSkew = TimeSpan.Zero,
+                           
                         };
                     });
         }
@@ -64,6 +91,7 @@ policy.WithOrigins("https://localhost:7118", "http://localhost:7118")
 .WithHeaders(HeaderNames.ContentType)
 );
             app.UseHttpsRedirection();
+            app.UseAuthentication();
             app.UseAuthorization();
             app.MapControllers();
             app.Run();

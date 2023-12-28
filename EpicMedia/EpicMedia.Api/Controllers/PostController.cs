@@ -8,8 +8,7 @@ using MongoDB.Bson;
 
 namespace EpicMedia.Api.Controllers
 {
-    [Authorize]
-    [Route("api/post")]
+    [Route("api/posts")]
     public class PostController : ControllerBase
     {
         private readonly IPostRepository _postRepository;
@@ -21,7 +20,8 @@ namespace EpicMedia.Api.Controllers
 
         [HttpPost]
         [Route("create")]
-        public async Task<IActionResult> create(PostDto postDto)
+        [Authorize]
+        public async Task<IActionResult> create([FromBody]PostDto postDto)
         {
             try
             {
