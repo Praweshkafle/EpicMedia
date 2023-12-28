@@ -1,5 +1,6 @@
 ﻿using Blazored.Modal.Services;
 using Microsoft.AspNetCore.Components;
+using System.Security.Claims;
 
 namespace EpicMedia.Web.Pages
 {
@@ -18,5 +19,8 @@ namespace EpicMedia.Web.Pages
             CreatePostDialogOpen = true;
             StateHasChanged();
         }
+
+
+       
     }
 }

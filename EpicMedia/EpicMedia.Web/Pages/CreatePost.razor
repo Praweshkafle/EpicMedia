@@ -1,5 +1,9 @@
 ﻿@page "/createpost"
 @using EpicMedia.Models.Dto;
+@inject IPostService _postService;
+@inject AuthenticationStateProvider authProvider;
+@using EpicMedia.Web.Services.Interface;
+@using System.Security.Claims;
 <style>
 
     ::selection {
@@ -198,58 +202,136 @@
         }
 
 </style>
+
 <div class="modal fade show" id="exampleModalCenter" tabindex="-1" style="display:block; background-color:rgba(10,10,10,0.8)" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered" role="document">
         <div class="modal-content">
-            <div class="container-modal">
-                <div class="wrapper">
-                    <section class="post">
-                        <div class="modal-header">
-                            <h5 class="modal-title" id="exampleModalLongTitle">Create Post</h5>
-                            <button type="button" class="close" data-dismiss="modal" @onclick="@(()=> ModalCancle())" aria-label="Close">
-                                <span aria-hidden="true">&times;</span>
-                            </button>
+            <div class="wrapper">
+                <section class="post">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="exampleModalLongTitle">Create Post</h5>
+                        <button type="button" class="close" data-dismiss="modal" @onclick="@(()=> ModalCancle())" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <EditForm Model="@Post" OnValidSubmit="addPost" OnInvalidSubmit="addPost">
+                        <div class="content">
+                            <img src="https://placekitten.com/50/50" alt="logo">
+                            <div class="details">
+                                <p>EpicMedia</p>
+                            </div>
                         </div>
-                        <EditForm Model="@Post" OnValidSubmit="addPost" OnInvalidSubmit="addPost">
-                            <div class="content">
-                                <img src="https://placekitten.com/50/50" alt="logo">
-                                <div class="details">
-                                    <p>EpicMedia</p>
-                                </div>
-                            </div>
-                            <textarea placeholder="What's on your mind, EpicMedia?" spellcheck="false" @bind="@Post.Content" required></textarea>
-                            <div class="options align-items-center">
-                                <p>Add to Your Post</p>
-                                <InputFile OnChange="handleFileChange"></InputFile>
-                                <i for="postimg" class="fa fa-image"></i>
-                            </div>
-                            <div class="modal-footer">
-                                <button type="submit" class="btn btn-primary">Post</button>
-                            </div>
-                        </EditForm>
-                    </section>
-                </div>
+                        <textarea placeholder="What's on your mind, EpicMedia?" spellcheck="false" @bind="@Post.Content" required></textarea>
+                        <div class="">
+                            <img src="@postImg" />
+                            @if (hideRemove)
+                            {
+                                <button class="btn btn-danger h-25" @onclick="(()=> handleRemoveButton())" style="width:100px">Remove</button>
+                            }
+                        </div>
+                        <div class="options align-items-center">
+                            <InputFile @key="@_inputFileId" OnChange="handleFileChange"></InputFile>
+                            <i for="postimg" class="fa fa-image"></i>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="submit" class="btn btn-primary">Post</button>
+                        </div>
+                    </EditForm>
+                </section>
             </div>
-
         </div>
     </div>
 </div>
-@code{
+@code {
     [Parameter]
     public EventCallback<bool> OnClose { get; set; }
-    IBrowserFile selectedFile;
+    [Parameter]
+    public string UserId { get; set; }
 
-
+    bool hideRemove = false;
+    string successMessage { get; set; }
+    IBrowserFile selectedFile { get; set; }
+    int maxFileSize = 1 * 1024 * 1024;
+    string postImg = "";
     public PostDto Post = new PostDto();
+    private string _inputFileId = Guid.NewGuid().ToString();
+    private IEnumerable<Claim> claims = Enumerable.Empty<Claim>();
+
+    async Task handleRemoveButton()
+    {
+        hideRemove = false;
+        selectedFile = null;
+        await handleFileChange(null);
+    }
+    async Task<string> GetUserId()
+    {
+        var authState = await authProvider
+             .GetAuthenticationStateAsync();
+        var user = authState.User;
+
+        if (user.Identity is not null && user.Identity.IsAuthenticated)
+        {
+            claims = user.Claims.ToList();
+            var userid = claims.Where(a => a.Type == "Id").Select(b => b.Value).FirstOrDefault();
+            return userid;
+        }
+        return "";
+    }
 
     public async Task handleFileChange(InputFileChangeEventArgs eventArgs)
     {
+        if (eventArgs == null)
+        {
+            postImg = "";
+            selectedFile = null;
+            _inputFileId = Guid.NewGuid().ToString();
+        }
+
         selectedFile = eventArgs.File;
+
+        var image = await eventArgs.File.RequestImageFileAsync("image/png", 100, 150);
+
+        using Stream imageStream = image.OpenReadStream(1024 * 1024 * 10);
+
+        using MemoryStream ms = new();
+        //copy imageStream to Memory stream
+        await imageStream.CopyToAsync(ms);
+
+        //convert stream to base64
+        postImg = $"data:image/png;base64,{Convert.ToBase64String(ms.ToArray())}";
+        hideRemove = true;
+        StateHasChanged();
     }
 
-    public void addPost()
+    public async Task addPost()
     {
-        var post = Post; 
+        try
+        {
+            string userId = await GetUserId();
+            var post = new PostDto
+                {
+                    Content = Post.Content,
+                    CreatedAt = DateTime.Now,
+                    User=userId,
+                };
+            if (post != null)
+            {
+                var result= await _postService.PostAsync(post, selectedFile);
+                if (result.Success)
+                {
+                    successMessage = result.Message;
+                }
+                else
+                {
+                    
+                }
+            }
+        }
+        catch (Exception)
+        {
+
+            throw;
+        }
     }
 
     private Task ModalCancle()
