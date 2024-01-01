@@ -21,11 +21,12 @@ namespace EpicMedia.Web.Shared.Manager
                 return await base.SendAsync(request, cancellationToken);
             }
 
-            var jwtToken =await _localStorageService.GetItemAsync<string>("jwt-access-token");
+            var jwtToken = await _localStorageService.GetItemAsync<string>("jwt-access-token");
 
-            if(!string.IsNullOrEmpty(jwtToken))
+            if (!string.IsNullOrEmpty(jwtToken))
             {
-                request.Headers.Add("Authorization",$"Bearer {jwtToken}");
+                request.Headers.Clear();
+                request.Headers.Add("Authorization", $"Bearer {jwtToken}");
             }
             return await base.SendAsync(request, cancellationToken);
 
