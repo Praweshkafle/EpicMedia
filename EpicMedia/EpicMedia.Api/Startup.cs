@@ -86,9 +86,9 @@ namespace EpicMedia.Api
             }
             app.UseStatusCodePagesWithReExecute("/error/{0}");
             app.UseCors(policy =>
-policy.WithOrigins("https://localhost:7118", "http://localhost:7118")
-.AllowAnyMethod()
-.WithHeaders(HeaderNames.ContentType)
+policy.WithOrigins("https://localhost:7118", "http://localhost:7118").AllowAnyHeader()
+                          .AllowAnyMethod()
+                          .AllowCredentials()
 );
             app.UseHttpsRedirection();
             app.UseAuthentication();
