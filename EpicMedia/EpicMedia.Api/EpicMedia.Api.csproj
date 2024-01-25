@@ -20,4 +20,8 @@
     <ProjectReference Include="..\EpicMedia.Models\EpicMedia.Models.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="wwwroot\" />
+  </ItemGroup>
+
 </Project>

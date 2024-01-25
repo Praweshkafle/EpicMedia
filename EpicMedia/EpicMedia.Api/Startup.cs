@@ -1,4 +1,5 @@
-﻿using EpicMedia.Api.Repository.Implementation;
+﻿using EpicMedia.Api.Filemanager;
+using EpicMedia.Api.Repository.Implementation;
 using EpicMedia.Api.Repository.Interface;
 using EpicMedia.Api.Services.Implementation;
 using EpicMedia.Api.Services.Interface;
@@ -27,6 +28,7 @@ namespace EpicMedia.Api
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddScoped<IUserRepository, UserRepository>();
+            services.AddScoped<IFileManager, FileManager>();
             services.AddScoped<IPostRepository, PostRepository>();
             services.AddScoped<IUserService, UserService>();
             services.AddControllers();
@@ -84,6 +86,7 @@ namespace EpicMedia.Api
                 app.UseSwagger();
                 app.UseSwaggerUI();
             }
+            app.UseStaticFiles();
             app.UseStatusCodePagesWithReExecute("/error/{0}");
             app.UseCors(policy =>
 policy.WithOrigins("https://localhost:7118", "http://localhost:7118").AllowAnyHeader()
