@@ -13,9 +13,8 @@ namespace EpicMedia.Web.Shared.Manager
 
         protected async override Task<HttpResponseMessage> SendAsync(HttpRequestMessage request, CancellationToken cancellationToken)
         {
-
             if (request.RequestUri.AbsolutePath.ToLower().Contains("login") ||
-                request.RequestUri.AbsolutePath.ToLower().Contains("register"))
+                request.RequestUri.AbsolutePath.ToLower().Contains("register")|| request.RequestUri.AbsolutePath.ToLower().Contains("api/posts/getallpost"))
             {
 
                 return await base.SendAsync(request, cancellationToken);

@@ -218,7 +218,7 @@
                         <div class="content">
                             <img src="https://placekitten.com/50/50" alt="logo">
                             <div class="details">
-                                <p>EpicMedia</p>
+                                <p>@UserName</p>
                             </div>
                         </div>
                         <textarea placeholder="What's on your mind, EpicMedia?" spellcheck="false" @bind="@Post.Content" required></textarea>
@@ -247,6 +247,7 @@
     public EventCallback<bool> OnClose { get; set; }
     [Parameter]
     public string UserId { get; set; }
+    private string UserName;
 
     bool hideRemove = false;
     string successMessage { get; set; }
@@ -256,6 +257,13 @@
     public PostDto Post = new PostDto();
     private string _inputFileId = Guid.NewGuid().ToString();
     private IEnumerable<Claim> claims = Enumerable.Empty<Claim>();
+
+
+    protected override async Task OnInitializedAsync()
+    {
+        UserName = await GetUserName();
+    }
+
 
     async Task handleRemoveButton()
     {
@@ -273,6 +281,21 @@
         {
             claims = user.Claims.ToList();
             var userid = claims.Where(a => a.Type == "Id").Select(b => b.Value).FirstOrDefault();
+            return userid;
+        }
+        return "";
+    }
+
+    async Task<string> GetUserName()
+    {
+        var authState = await authProvider
+             .GetAuthenticationStateAsync();
+        var user = authState.User;
+
+        if (user.Identity is not null && user.Identity.IsAuthenticated)
+        {
+            claims = user.Claims.ToList();
+            var userid = claims.Where(a => a.Type == "UserName").Select(b => b.Value).FirstOrDefault();
             return userid;
         }
         return "";
@@ -320,10 +343,11 @@
                 if (result.Success)
                 {
                     successMessage = result.Message;
+                    await OnClose.InvokeAsync(false);
                 }
                 else
                 {
-                    
+                    successMessage = result.Message;
                 }
             }
         }

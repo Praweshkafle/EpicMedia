@@ -18,31 +18,60 @@ namespace EpicMedia.Web.Services.Implementation
             _httpClientFac = httpClientFac;
             var _httpClient = _httpClientFac.CreateClient("EpicMediaApi");
         }
+
+        public async Task<List<PostDto>> GetAllPost()
+        {
+            try
+            {
+                var _httpClient = _httpClientFac.CreateClient("EpicMediaApi");
+
+                var response =await _httpClient.GetAsync("api/posts/getallpost");
+                if (response.IsSuccessStatusCode)
+                {
+                    if (response.StatusCode == System.Net.HttpStatusCode.NoContent)
+                    {
+                        return new List<PostDto>();
+                    }
+                    return await response.Content.ReadFromJsonAsync<List<PostDto>>();
+                }
+                else
+                {
+                    var message = await response.Content.ReadAsStringAsync();
+                    throw new Exception(message);
+                }
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
+        }
+
         public async Task<ApiModel> PostAsync(PostDto post, IBrowserFile file)
         {
             try
             {
                 var _httpClient = _httpClientFac.CreateClient("EpicMediaApi");
-                var newpost = new PostDto
-                {
-                    Comments = new List<CommentDto>(),
-                    CreatedAt = DateTime.Now,
-                    Content = post.Content,
-                    Image = "",
-                    Likes = new List<string>(),
-                    User = "user",
-                };
-                var jsonPayload = JsonSerializer.Serialize(newpost);
-                var content= new StringContent(jsonPayload, Encoding.UTF8,"application/json");
-                var response = await _httpClient.PostAsync("api/posts/create", content);
 
-                if (response.IsSuccessStatusCode)
+                using (var fileStream = file.OpenReadStream(file.Size))
                 {
-                    return new ApiModel { Success = true, Message = "Post Created Successfully" };
-                }
-                else
-                {
-                    return new ApiModel { Success = false, Message = "Unable To Post" };
+                    var content = new MultipartFormDataContent();
+
+                    var jsonPayload = JsonSerializer.Serialize(post);
+                    content.Add(new StringContent(jsonPayload, Encoding.UTF8, "application/json"), "postdto");
+
+                    content.Add(new StreamContent(fileStream), "file", file.Name);
+
+                    var response = await _httpClient.PostAsync("api/posts/create", content);
+
+                    if (response.IsSuccessStatusCode)
+                    {
+                        return new ApiModel { Success = true, Message = "Post Created Successfully" };
+                    }
+                    else
+                    {
+                        return new ApiModel { Success = false, Message = "Unable To Post" };
+                    }
                 }
             }
             catch (Exception ex)
