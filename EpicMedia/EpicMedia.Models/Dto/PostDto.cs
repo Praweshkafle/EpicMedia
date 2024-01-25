@@ -10,7 +10,7 @@ namespace EpicMedia.Models.Dto
 {
     public class PostDto
     {
-        public ObjectId Id { get; set; } // Assuming ObjectId as the ID type
+        public string Id { get; set; } // Assuming ObjectId as the ID type
         public string Content { get; set; }
         public string User { get; set; }
         public string Image { get; set; }
