@@ -89,10 +89,10 @@ namespace EpicMedia.Api
             app.UseStaticFiles();
             app.UseStatusCodePagesWithReExecute("/error/{0}");
             app.UseCors(policy =>
-policy.WithOrigins("https://localhost:7118", "http://localhost:7118").AllowAnyHeader()
+            policy.WithOrigins("https://localhost:7118", "http://localhost:7118").AllowAnyHeader()
                           .AllowAnyMethod()
                           .AllowCredentials()
-);
+                            );
             app.UseHttpsRedirection();
             app.UseAuthentication();
             app.UseAuthorization();
