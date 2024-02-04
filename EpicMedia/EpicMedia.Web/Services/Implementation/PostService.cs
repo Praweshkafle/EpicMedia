@@ -2,6 +2,7 @@
 using EpicMedia.Web.Services.Interface;
 using EpicMedia.Web.ViewModels;
 using Microsoft.AspNetCore.Components.Forms;
+using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Net.Http.Json;
 using System.Net.Mime;
@@ -16,8 +17,9 @@ namespace EpicMedia.Web.Services.Implementation
         public PostService(IHttpClientFactory httpClientFac)
         {
             _httpClientFac = httpClientFac;
-            var _httpClient = _httpClientFac.CreateClient("EpicMediaApi");
         }
+
+
 
         public async Task<List<PostDto>> GetAllPost()
         {
@@ -76,6 +78,31 @@ namespace EpicMedia.Web.Services.Implementation
             }
             catch (Exception ex)
             {
+                throw;
+            }
+        }
+
+        public async Task<ApiModel> PostCommentAsync(CommentDto comment, string postId)
+        {
+            try
+            {
+                var _httpClient = _httpClientFac.CreateClient("EpicMediaApi");
+
+                var jsonPayload = JsonSerializer.Serialize(comment);
+                var requestContent = new StringContent(jsonPayload, Encoding.UTF8, "application/json");
+                var response = await _httpClient.PostAsync(("api/posts/comment/"+postId+"/"), requestContent);
+                if (response.IsSuccessStatusCode)
+                {
+                    return new ApiModel { Success = true, Message = "Comment Successfully" };
+                }
+                else
+                {
+                    return new ApiModel { Success = false, Message = "Unable To comment" };
+                }
+            }
+            catch (Exception)
+            {
+
                 throw;
             }
         }
