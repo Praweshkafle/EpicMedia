@@ -64,19 +64,23 @@ namespace EpicMedia.Api.Controllers
         {
             try
             {
-                //var post =await _postRepository.GetById(postId);
-                //if (post == null) { return BadRequest(new { Sucess = false, Message = "Error occured!" }); }
+                var post = await _postRepository.GetById(new ObjectId(postId));
+                if (post == null) { return BadRequest(new { Sucess = false, Message = "Error occured!" }); }
+                if (post.Comments == null)
+                {
+                    post.Comments = new List<Comment>();
+                }
+                var comment = new Comment
+                {
+                    Id = ObjectId.GenerateNewId(),
+                    CreatedAt = DateTime.Now,
+                    Text = commentDto.Text,
+                    User = post.User,
+                };
 
-                //var comment = new Comment
-                //{
-                //    CreatedAt = DateTime.Now,
-                //    Text = commentDto.Text,
-                //    User = post.User,
-                //};
+                post.Comments.Add(comment);
 
-                //post.Comments.Add(comment);
-
-                //var result = await _postRepository.Update(postId,post);
+                var result = await _postRepository.Update(new ObjectId(postId), post);
 
                 return Ok(new { Sucess = true, Message = "Post updated successfully!" });
             }
