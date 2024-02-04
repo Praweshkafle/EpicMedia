@@ -8,5 +8,6 @@ namespace EpicMedia.Web.Services.Interface
     {
         Task<ApiModel> PostAsync(PostDto post,IBrowserFile file);
         Task<List<PostDto>> GetAllPost();
+        Task<ApiModel> PostCommentAsync(CommentDto comment, string postId);
     }
 }
