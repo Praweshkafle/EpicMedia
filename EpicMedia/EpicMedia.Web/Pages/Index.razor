@@ -2,8 +2,8 @@
 @inherits IndexBase
 @using EpicMedia.Models.Dto;
 @using EpicMedia.Web.Services.Interface;
+@using System.Security.Claims;
 @inject IPostService _postService;
-@inject AuthenticationStateProvider authProvider;
 <style>
     .postcontainer {
         max-width: 650px;
@@ -51,22 +51,17 @@
         <div class="container post-container mt-1 mb-2">
             <div class="row justify-content-center">
                 <div class="card col-md-6 p-3" style="background:#f1f1f1">
-
-                    <!-- Post Header -->
                     <div class="post-header d-flex mb-2">
                         <img src="https://placekitten.com/50/50" alt="User Avatar" class="user-avatar rounded-circle">
                         <div style="margin-left:10px">
-                            <h6 class="mb-0">Username</h6>
+                            <h6 class="mb-0">example</h6>
                             <small class="text-muted">Location</small>
                         </div>
                     </div>
 
-                    <!-- Post Image -->
                     <img src="@item.Image" alt="Post Image" class="post-image">
 
-                    <!-- Post Footer (Engagement buttons, comments, etc.) -->
                     <div class="post-footer">
-                        <!-- Engagement buttons (e.g., like, comment) -->
                         <div class="d-flex justify-content-between">
                             <div class="m-2 ">
                                 <i class="fa fa-heart-o" style="font-size:24px; margin-right:10px"></i>
@@ -75,17 +70,14 @@
                             <button type="button" class="btn btn-link"><i class="bi-bookmark"></i></button>
                         </div>
 
-                        <!-- Comments section -->
                         <div>
                             <p><strong>Username:</strong> This is an amazing photo!</p>
                             <p><strong>AnotherUser:</strong> Nice shot!</p>
-                            <!-- Add more comments as needed -->
                         </div>
                     </div>
-                    <!-- Add a comment form -->
                     <div class="mb-3 d-flex">
-                        <input type="text" class="form-control w-100" placeholder="Add a comment...">
-                        <button type="button" class="btn btn-success btn-sm w-25">Post</button>
+                            <input type="text" @bind="@commentText" class="form-control w-100" placeholder="Add a comment...">
+                            <button type="button" @onclick="()=>PostComment(item.Id)" class="btn btn-success btn-sm w-25">Post</button>
                     </div>
                 </div>
             </div>
