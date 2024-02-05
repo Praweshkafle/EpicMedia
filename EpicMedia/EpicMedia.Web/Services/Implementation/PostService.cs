@@ -49,6 +49,29 @@ namespace EpicMedia.Web.Services.Implementation
             }
         }
 
+        public async Task<ApiModel> LikeDislikeAsync(string postId)
+        {
+            try
+            {
+                var _httpClient = _httpClientFac.CreateClient("EpicMediaApi");
+
+                var response = await _httpClient.PostAsync("api/posts/like/" + postId + "/",null);
+                if (response.IsSuccessStatusCode)
+                {
+                    return new ApiModel { Success = true, Message = "Comment Successfully" };
+                }
+                else
+                {
+                    return new ApiModel { Success = false, Message = "Unable To comment" };
+                }
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
+        }
+
         public async Task<ApiModel> PostAsync(PostDto post, IBrowserFile file)
         {
             try
