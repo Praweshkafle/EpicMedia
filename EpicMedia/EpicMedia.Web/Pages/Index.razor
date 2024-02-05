@@ -37,47 +37,59 @@
 <div class="container">
     <div class="postcontainer">
         <textarea class="form-control post-input"
-                  rows="3" placeholder="What's on your mind?"></textarea>
-
-        <div class="post-actions">
-            <button class="btn btn-primary" type="button" @onclick="@(()=>OpenCreatePostDialog())">Post</button>
-        </div>
+                  rows="3" placeholder="What's on your mind?" @onfocus="@(()=>OpenCreatePostDialog())"></textarea>
     </div>
 </div>
 
 @{
-    foreach (var item in Posts)
+    foreach (var post in Posts)
     {
-        <div class="container post-container mt-1 mb-2">
+        <div class="container post-container mt-1 mb-5">
             <div class="row justify-content-center">
                 <div class="card col-md-6 p-3" style="background:#f1f1f1">
                     <div class="post-header d-flex mb-2">
                         <img src="https://placekitten.com/50/50" alt="User Avatar" class="user-avatar rounded-circle">
                         <div style="margin-left:10px">
-                            <h6 class="mb-0">example</h6>
+                            <h6 class="mb-0">@post.User</h6>
                             <small class="text-muted">Location</small>
                         </div>
                     </div>
-
-                    <img src="@item.Image" alt="Post Image" class="post-image">
+                    <p>@post.Content</p>
+                    <img src="@post.Image" alt="Post Image" class="post-image">
 
                     <div class="post-footer">
                         <div class="d-flex justify-content-between">
                             <div class="m-2 ">
-                                <i class="fa fa-heart-o" style="font-size:24px; margin-right:10px"></i>
+                                <i class="@GetLikeIcon(post.Id)" style="font-size:24px; margin-right:10px" @onclick="(()=>ToggleLike(post.Id))"></i>
                                 <i class="fa fa-comments-o" style="font-size:24px"></i>
                             </div>
-                            <button type="button" class="btn btn-link"><i class="bi-bookmark"></i></button>
                         </div>
 
                         <div>
-                            <p><strong>Username:</strong> This is an amazing photo!</p>
-                            <p><strong>AnotherUser:</strong> Nice shot!</p>
+                            @if (IsAuthinticate)
+                            {
+                                @foreach (var comment in post.Comments)
+                                {
+                                    <p><strong>@comment.User:</strong>@comment.Text</p>
+
+                                }
+                                @if (newComments.Any())
+                                {
+                                    foreach (var item in newComments)
+                                    {
+                                        if (item.postId == post.Id)
+                                        {
+                                            <p><strong>@item.User:</strong> @item.Text</p>
+                                        }
+                                    }
+                                }
+                            }
+                           
                         </div>
                     </div>
                     <div class="mb-3 d-flex">
                             <input type="text" @bind="@commentText" class="form-control w-100" placeholder="Add a comment...">
-                            <button type="button" @onclick="()=>PostComment(item.Id)" class="btn btn-success btn-sm w-25">Post</button>
+                            <button type="button" @onclick="()=>PostComment(post.Id)" class="btn btn-success btn-sm w-25">Post</button>
                     </div>
                 </div>
             </div>

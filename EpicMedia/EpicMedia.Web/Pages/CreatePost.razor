@@ -221,7 +221,7 @@
                                 <p>@UserName</p>
                             </div>
                         </div>
-                        <textarea placeholder="What's on your mind, EpicMedia?" spellcheck="false" @bind="@Post.Content" required></textarea>
+                        <textarea placeholder="What's on your mind, @UserName?" spellcheck="false" @bind="@Post.Content" required></textarea>
                         <div class="">
                             <img src="@postImg" />
                             @if (hideRemove)

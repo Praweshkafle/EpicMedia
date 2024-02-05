@@ -10,8 +10,12 @@ namespace EpicMedia.Web.Pages
     public class IndexBase:ComponentBase
     {
         [Inject]
-        private AuthenticationStateProvider authProvider { get; set; }
+        public AuthenticationStateProvider authProvider { get; set; }
+        [Inject]
+        private NavigationManager navigationManager { get; set; }
         public bool CreatePostDialogOpen { get; set; }
+        public bool IsAuthinticate { get; set; }
+        public List<CommentDto> newComments { get; set; }=new List<CommentDto>();
         public string commentText { get; set; }
         public List<PostDto> Posts { get; set; }
         [Inject]
@@ -20,9 +24,33 @@ namespace EpicMedia.Web.Pages
 
         protected override async Task OnInitializedAsync()
         {
+            var authstate = await authProvider.GetAuthenticationStateAsync();
+            IsAuthinticate = authstate.User.Identity.IsAuthenticated;
             Posts =await _postService.GetAllPost();
-
+            newComments.Clear();
         }
+
+        private Dictionary<string, bool> postLikes = new Dictionary<string, bool>();
+
+        public string GetLikeIcon(string postId)
+        {
+            return postLikes.TryGetValue(postId, out var liked) && liked ? "fa fa-heart" : "fa fa-heart-o";
+        }
+
+        public void ToggleLike(string postId)
+        {
+            if (postLikes.ContainsKey(postId))
+            {
+                postLikes[postId] = !postLikes[postId];
+            }
+            else
+            {
+                postLikes.Add(postId, true);
+            }
+            var result = _postService.LikeDislikeAsync(postId);
+        }
+
+
         async Task<string> GetUserId()
         {
             var authState = await authProvider
@@ -41,7 +69,18 @@ namespace EpicMedia.Web.Pages
         {
             try
             {
+                if (!IsAuthinticate)
+                {
+                    navigationManager.NavigateTo("/login");
+                }
                 string userId = await GetUserId();
+                newComments.Add(new CommentDto
+                {
+                    User = userId,
+                    CreatedAt = DateTime.Now,
+                    Text = commentText,
+                    postId=postId
+                });
                 var commentDto = new CommentDto
                 {
                     Text = commentText,
@@ -51,7 +90,8 @@ namespace EpicMedia.Web.Pages
                 var response = await _postService.PostCommentAsync(commentDto,postId);
                 if (response.Success)
                 {
-
+                    commentText = "";
+                    StateHasChanged();
                 }
             }
             catch (Exception)
