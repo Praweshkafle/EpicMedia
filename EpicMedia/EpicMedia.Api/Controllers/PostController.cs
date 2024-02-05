@@ -8,6 +8,8 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Hosting;
 using MongoDB.Bson;
+using System.Linq;
+using System.Security.Claims;
 
 namespace EpicMedia.Api.Controllers
 {
@@ -100,14 +102,16 @@ namespace EpicMedia.Api.Controllers
                 var posts = await _postRepository.GetAll();
                 if (posts == null) return NotFound();
                 string imgurl = GetPostImageFullPath();
-                var postDtos = posts.Select(post => new PostDto
+                
+                var postDtos = posts.ToList().Select( post => new PostDto
                 {
                     Id = post.Id.ToString(), 
                     Content = post.Content,
                     User = post.User,
                     Image = imgurl+post.Image,
                     Likes = post.Likes,
-                    CreatedAt = post.CreatedAt
+                    CreatedAt = post.CreatedAt,
+                    Comments=  convertToDto(post.Comments),
                 }).ToList();
 
                 return Ok(postDtos);
@@ -119,9 +123,70 @@ namespace EpicMedia.Api.Controllers
             }
         }
 
+
+        [HttpPost("like/{postId}")]
+        [Authorize] // Ensure the user is authenticated
+        public async Task<IActionResult> LikePost(string postId)
+        {
+            try
+            {
+                string userId = User.FindFirst("Id")?.Value;
+
+                if (string.IsNullOrEmpty(userId))
+                {
+                    return Unauthorized();
+                }
+
+                var post = await _postRepository.GetById(new ObjectId(postId));
+
+                if (post != null)
+                {
+                    if (post.Likes.Contains(userId))
+                    {
+                        post.Likes.Remove(userId);
+                    }
+                    else
+                    {
+                        post.Likes.Add(userId);
+                    }
+
+                    await _postRepository.Update(new ObjectId(postId), post);
+
+                    return Ok(new { Success = true, Message = "Post liked successfully!" });
+                }
+
+                return BadRequest(new { Success = false, Message = "Post not found." });
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new { Success = false, Message = "Error occurred while liking the post.", Error = ex.Message });
+            }
+        }
+
+
         private string GetPostImageFullPath()
         {
             return "https://localhost:7270/Images/Custom/";
+        }
+
+        private List<CommentDto> convertToDto(List<Comment> comments)
+        {
+            if (comments == null)
+            {
+                return new List<CommentDto>();
+            }
+            var result = new List<CommentDto>();
+            foreach (var comment in comments)
+            {
+                result.Add(new CommentDto
+                {
+                    Id = comment.Id,
+                    CreatedAt = comment.CreatedAt,
+                    Text = comment.Text,
+                    User = comment.User,
+                });
+            }
+            return result;
         }
     }
 }
