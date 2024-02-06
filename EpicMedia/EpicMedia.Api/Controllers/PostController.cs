@@ -124,9 +124,9 @@ namespace EpicMedia.Api.Controllers
         }
 
 
-        [HttpPost("like/{postId}")]
+        [HttpPost("like")]
         [Authorize] // Ensure the user is authenticated
-        public async Task<IActionResult> LikePost(string postId)
+        public async Task<IActionResult> LikePost([FromBody]  string postId)
         {
             try
             {
@@ -180,7 +180,7 @@ namespace EpicMedia.Api.Controllers
             {
                 result.Add(new CommentDto
                 {
-                    Id = comment.Id,
+                    Id = comment.Id.ToString(),
                     CreatedAt = comment.CreatedAt,
                     Text = comment.Text,
                     User = comment.User,
