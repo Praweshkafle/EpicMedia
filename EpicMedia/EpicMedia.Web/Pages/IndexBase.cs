@@ -1,5 +1,4 @@
-﻿using Blazored.Modal.Services;
-using EpicMedia.Models.Dto;
+﻿using EpicMedia.Models.Dto;
 using EpicMedia.Web.Services.Interface;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Authorization;
@@ -17,6 +16,7 @@ namespace EpicMedia.Web.Pages
         public bool IsAuthinticate { get; set; }
         public List<CommentDto> newComments { get; set; }=new List<CommentDto>();
         public string commentText { get; set; }
+        public string UserId { get; set; }
         public List<PostDto> Posts { get; set; }
         [Inject]
         public IPostService _postService { get; set; }
@@ -27,29 +27,59 @@ namespace EpicMedia.Web.Pages
             var authstate = await authProvider.GetAuthenticationStateAsync();
             IsAuthinticate = authstate.User.Identity.IsAuthenticated;
             Posts =await _postService.GetAllPost();
+            UserId = await GetUserId();
             newComments.Clear();
         }
 
+
         private Dictionary<string, bool> postLikes = new Dictionary<string, bool>();
+
+
+        public string selectedCommentId = null;
+
+        // Variable to hold the reply text
+        public string replyText = "";
+
+        // Method to toggle the reply section
+        public void ToggleReplySection(string commentId)
+        {
+            selectedCommentId = selectedCommentId == commentId ? null : commentId;
+            replyText = ""; // Reset reply text when toggling
+        }
+
+        // Method to post a reply to a comment
+        public async Task PostReply(string postId, string commentId)
+        {
+            // Call your service method to post the reply
+            // Ensure to pass postId, commentId, and replyText to the service method
+
+            // Reset selected comment after posting reply
+            selectedCommentId = null;
+        }
+
 
         public string GetLikeIcon(string postId)
         {
-            return postLikes.TryGetValue(postId, out var liked) && liked ? "fa fa-heart" : "fa fa-heart-o";
+            var post = Posts.FirstOrDefault(p => p.Id == postId);
+            if (post != null && post.Likes.Contains(UserId))
+            {
+                return "fa fa-heart";
+            }
+            return "fa fa-heart-o";
         }
 
-        public void ToggleLike(string postId)
+        public async void ToggleLike(PostDto post)
         {
-            if (postLikes.ContainsKey(postId))
+            if (post.Likes.Contains(UserId))
             {
-                postLikes[postId] = !postLikes[postId];
+                post.Likes.Remove(UserId);
             }
             else
             {
-                postLikes.Add(postId, true);
+                post.Likes.Add(UserId);
             }
-            var result = _postService.LikeDislikeAsync(postId);
+            var result =await _postService.LikeDislikeAsync(post.Id);
         }
-
 
         async Task<string> GetUserId()
         {

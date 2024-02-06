@@ -60,7 +60,7 @@
                     <div class="post-footer">
                         <div class="d-flex justify-content-between">
                             <div class="m-2 ">
-                                <i class="@GetLikeIcon(post.Id)" style="font-size:24px; margin-right:10px" @onclick="(()=>ToggleLike(post.Id))"></i>
+                                <i class="@GetLikeIcon(post.Id)" style="font-size:24px; margin-right:10px" @onclick="()=>ToggleLike(post)"></i><span>@post.Likes.Count</span>
                                 <i class="fa fa-comments-o" style="font-size:24px"></i>
                             </div>
                         </div>
@@ -70,26 +70,27 @@
                             {
                                 @foreach (var comment in post.Comments)
                                 {
-                                    <p><strong>@comment.User:</strong>@comment.Text</p>
-
-                                }
-                                @if (newComments.Any())
-                                {
-                                    foreach (var item in newComments)
-                                    {
-                                        if (item.postId == post.Id)
+                                    <div>
+                                        <div class="d-inline position-relative">
+                                            <p><strong>@comment.User:</strong>@comment.Text</p>
+                                            <i class="fa fa-reply position-absolute top-0 end-0 mt-2 me-2" style="cursor: pointer;color:gray;" aria-hidden="true" @onclick="()=>ToggleReplySection(comment.Id)"></i>
+                                        </div>
+                                        
+                                        @if (comment.Id.ToString() == selectedCommentId)
                                         {
-                                            <p><strong>@item.User:</strong> @item.Text</p>
+                                            <div class="m-2 d-flex">
+                                                <input type="text" @bind="@replyText" class="form-control w-100" placeholder="Add a reply...">
+                                                <button type="button" @onclick="()=> PostReply(post.Id, comment.Id)" class="btn btn-success btn-sm w-25">Post</button>
+                                            </div>
                                         }
-                                    }
+                                    </div>
                                 }
                             }
-                           
                         </div>
                     </div>
                     <div class="mb-3 d-flex">
-                            <input type="text" @bind="@commentText" class="form-control w-100" placeholder="Add a comment...">
-                            <button type="button" @onclick="()=>PostComment(post.Id)" class="btn btn-success btn-sm w-25">Post</button>
+                        <input type="text" @bind="@commentText" class="form-control w-100" placeholder="Add a comment...">
+                        <button type="button" @onclick="()=>PostComment(post.Id)" class="btn btn-success btn-sm w-25">Post</button>
                     </div>
                 </div>
             </div>
