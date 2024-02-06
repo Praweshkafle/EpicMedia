@@ -54,8 +54,9 @@ namespace EpicMedia.Web.Services.Implementation
             try
             {
                 var _httpClient = _httpClientFac.CreateClient("EpicMediaApi");
-
-                var response = await _httpClient.PostAsync("api/posts/like/" + postId + "/",null);
+                var jsonPayload = JsonSerializer.Serialize(postId);
+                var requestContent = new StringContent(jsonPayload, Encoding.UTF8, "application/json");
+                var response = await _httpClient.PostAsync("api/posts/like/",requestContent);
                 if (response.IsSuccessStatusCode)
                 {
                     return new ApiModel { Success = true, Message = "Comment Successfully" };
