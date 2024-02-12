@@ -61,6 +61,50 @@ namespace EpicMedia.Api.Controllers
         }
 
         [HttpPost]
+        [Route("reply")]
+        public async Task<IActionResult> reply([FromBody] ReplyDto replyDto)
+        {
+            try
+            {
+                var post = await _postRepository.GetById(new ObjectId(replyDto.postId));
+                if (post == null) { return BadRequest(new { Sucess = false, Message = "Error occured!" }); }
+                if (post.Comments == null)
+                {
+                    post.Comments = new List<Comment>();
+                }
+                var reply = new Reply
+                {
+                    Id = ObjectId.GenerateNewId(),
+                    CreatedAt = replyDto.CreatedAt,
+                    Text = replyDto.Text,
+                    User = post.User,
+                    ParentCommentId=replyDto.ParentCommentId,
+                    postId=replyDto.postId,
+                };
+
+                var parentComment = post.Comments.FirstOrDefault(a => a.Id.ToString() == replyDto.ParentCommentId);
+                if (parentComment != null)
+                {
+                    parentComment.Replies.Add(reply);
+                }
+                else
+                {
+                    return BadRequest(new { Success = false, Message = "Parent comment not found." });
+                }
+
+                var result = await _postRepository.Update(new ObjectId(replyDto.postId), post);
+
+                return Ok(new { Sucess = true, Message = "Post updated successfully!" });
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
+        }
+
+
+        [HttpPost]
         [Route("comment/{postId}")]
         public async Task<IActionResult> comment([FromBody] CommentDto commentDto,string postId)
         {
