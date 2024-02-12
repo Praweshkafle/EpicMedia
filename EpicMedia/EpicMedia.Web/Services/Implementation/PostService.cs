@@ -130,5 +130,30 @@ namespace EpicMedia.Web.Services.Implementation
                 throw;
             }
         }
+
+        public async Task<ApiModel> PostCommentReplyAsync(ReplyDto reply)
+        {
+            try
+            {
+                var _httpClient = _httpClientFac.CreateClient("EpicMediaApi");
+
+                var jsonPayload = JsonSerializer.Serialize(reply);
+                var requestContent = new StringContent(jsonPayload, Encoding.UTF8, "application/json");
+                var response = await _httpClient.PostAsync(("api/posts/reply/"), requestContent);
+                if (response.IsSuccessStatusCode)
+                {
+                    return new ApiModel { Success = true, Message = "Comment reply Successfully" };
+                }
+                else
+                {
+                    return new ApiModel { Success = false, Message = "Unable To comment" };
+                }
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
+        }
     }
 }
