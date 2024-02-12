@@ -75,14 +75,24 @@
                                             <p><strong>@comment.User:</strong>@comment.Text</p>
                                             <i class="fa fa-reply position-absolute top-0 end-0 mt-2 me-2" style="cursor: pointer;color:gray;" aria-hidden="true" @onclick="()=>ToggleReplySection(comment.Id)"></i>
                                         </div>
-                                        
+                                        @if (comment.Replies.Count > 0)
+                                        {
+                                            @foreach (var reply in comment.Replies)
+                                            {
+                                                <div class="ml-4">
+                                                    <p><strong>@reply.User:</strong>@reply.Text</p>
+                                                </div>
+                                            }
+                                        }
+                                       
                                         @if (comment.Id.ToString() == selectedCommentId)
                                         {
                                             <div class="m-2 d-flex">
                                                 <input type="text" @bind="@replyText" class="form-control w-100" placeholder="Add a reply...">
-                                                <button type="button" @onclick="()=> PostReply(post.Id, comment.Id)" class="btn btn-success btn-sm w-25">Post</button>
+                                                <button type="button" @onclick="()=> PostReply(post.Id, comment.Id.ToString())" class="btn btn-success btn-sm w-25">Post</button>
                                             </div>
                                         }
+                                       
                                     </div>
                                 }
                             }

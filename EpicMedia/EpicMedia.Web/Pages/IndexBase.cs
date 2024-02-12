@@ -3,6 +3,7 @@ using EpicMedia.Web.Services.Interface;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Authorization;
 using System.Security.Claims;
+using System.Xml;
 
 namespace EpicMedia.Web.Pages
 {
@@ -52,7 +53,20 @@ namespace EpicMedia.Web.Pages
         {
             // Call your service method to post the reply
             // Ensure to pass postId, commentId, and replyText to the service method
-
+            var reply = new ReplyDto
+            {
+                CreatedAt = DateTime.Now,
+                ParentCommentId = commentId,
+                postId = postId,
+                Text = replyText,
+                User = UserId,
+            };
+            var response = await _postService.PostCommentReplyAsync(reply);
+            if (response.Success)
+            {
+                replyText = "";
+                StateHasChanged();
+            }
             // Reset selected comment after posting reply
             selectedCommentId = null;
         }
@@ -109,7 +123,8 @@ namespace EpicMedia.Web.Pages
                     User = userId,
                     CreatedAt = DateTime.Now,
                     Text = commentText,
-                    postId=postId
+                    postId=postId,
+                    Replies=new List<ReplyDto>(),
                 });
                 var commentDto = new CommentDto
                 {
