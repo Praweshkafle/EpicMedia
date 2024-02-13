@@ -94,7 +94,7 @@ namespace EpicMedia.Api.Controllers
 
                 var result = await _postRepository.Update(new ObjectId(replyDto.postId), post);
 
-                return Ok(new { Sucess = true, Message = "Post updated successfully!" });
+                return Ok(new { Sucess = true, Message = "Post updated successfully! " });
             }
             catch (Exception)
             {
