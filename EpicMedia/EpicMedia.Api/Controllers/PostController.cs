@@ -215,22 +215,22 @@ namespace EpicMedia.Api.Controllers
 
         private List<CommentDto> convertToDto(List<Comment> comments)
         {
-            if (comments == null)
+            return comments?.Select(comment => new CommentDto
             {
-                return new List<CommentDto>();
-            }
-            var result = new List<CommentDto>();
-            foreach (var comment in comments)
-            {
-                result.Add(new CommentDto
+                Id = comment.Id.ToString(),
+                CreatedAt = comment.CreatedAt,
+                Text = comment.Text,
+                User = comment.User,
+                Replies = comment.Replies.Select(reply => new ReplyDto
                 {
-                    Id = comment.Id.ToString(),
-                    CreatedAt = comment.CreatedAt,
-                    Text = comment.Text,
-                    User = comment.User,
-                });
-            }
-            return result;
+                    CreatedAt = reply.CreatedAt,
+                    Id = reply.Id.ToString(),
+                    ParentCommentId = reply.ParentCommentId.ToString(),
+                    postId = reply.postId,
+                    Text = reply.Text,
+                    User = reply.User
+                }).ToList()
+            }).ToList() ?? new List<CommentDto>();
         }
     }
 }
