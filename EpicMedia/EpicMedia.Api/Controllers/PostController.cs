@@ -47,7 +47,7 @@ namespace EpicMedia.Api.Controllers
                     Image = imagePath,
                     Likes = postDto.Likes,
                     User = postDto.User,
-                    Comments = null
+                    Comments = null,
                 };
                
                 await _postRepository.Create(post);
