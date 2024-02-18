@@ -18,7 +18,6 @@ namespace EpicMedia.Api.Controllers
     {
         private readonly IFileManager _fileManager;
         private readonly IPostRepository _postRepository;
-
         public PostController(IPostRepository postRepository ,IFileManager fileManager)
         {
             _postRepository = postRepository;
