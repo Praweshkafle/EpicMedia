@@ -31,6 +31,7 @@ namespace EpicMedia.Api.Controllers
         {
             try
             {
+
                 PostDto postDto =  Newtonsoft.Json.JsonConvert.DeserializeObject<PostDto>(postdto);
                 if(postDto == null) { return BadRequest(new { Sucess = false, Message = "Error occured!" }); }
                 string imagePath="";
