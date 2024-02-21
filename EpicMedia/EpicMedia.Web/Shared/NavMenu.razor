@@ -5,7 +5,7 @@
         <AuthorizeView>
             <Authorized>
                 <div>
-                    <a class="navbar-brand mx-5">Welcome, @GetUserName(context.User.Claims.ToList())</a>
+                    <a href="/profile" class="navbar-brand mx-5">Welcome, @GetUserName(context.User.Claims.ToList())</a>
                     <a href="#"><i class="fa fa-sign-out fa-lg" aria-hidden="true"></i></a>
                 </div>
             </Authorized>
