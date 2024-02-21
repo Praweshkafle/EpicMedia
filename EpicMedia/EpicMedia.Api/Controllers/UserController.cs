@@ -32,9 +32,9 @@ namespace EpicMedia.Api.Controllers
                 if (userDto != null)
                 {
                     var result = await IsDuplicate(userDto.Username, userDto.Email);
-                    if (result != null)
+                    if (result == null)
                     {
-                        throw new Exception("Please choose different username and email.");
+                        ModelState.AddModelError("Email ", "Please choose different username and email.");
                     }
                     var hashedpassword = BCrypt.Net.BCrypt.HashPassword(userDto.Password);
                     var user = new User
@@ -75,6 +75,8 @@ namespace EpicMedia.Api.Controllers
                 throw new Exception(ex.Message);
             }
         }
+
+
 
         private async Task<User> IsDuplicate(string username, string email)
         {
