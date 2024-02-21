@@ -16,6 +16,7 @@ namespace EpicMedia.Web.Pages
         public bool CreatePostDialogOpen { get; set; }
         public bool IsAuthinticate { get; set; }
         public List<CommentDto> newComments { get; set; }=new List<CommentDto>();
+        public List<ReplyDto> newReply { get; set; }=new List<ReplyDto>();
         public string commentText { get; set; }
         public string UserId { get; set; }
         public List<PostDto> Posts { get; set; }
@@ -30,29 +31,21 @@ namespace EpicMedia.Web.Pages
             Posts =await _postService.GetAllPost();
             UserId = await GetUserId();
             newComments.Clear();
+            newReply.Clear();
         }
-
-
-        private Dictionary<string, bool> postLikes = new Dictionary<string, bool>();
 
 
         public string selectedCommentId = null;
 
-        // Variable to hold the reply text
         public string replyText = "";
 
-        // Method to toggle the reply section
         public void ToggleReplySection(string commentId)
         {
             selectedCommentId = selectedCommentId == commentId ? null : commentId;
-            replyText = ""; // Reset reply text when toggling
+            replyText = ""; 
         }
-
-        // Method to post a reply to a comment
         public async Task PostReply(string postId, string commentId)
         {
-            // Call your service method to post the reply
-            // Ensure to pass postId, commentId, and replyText to the service method
             var reply = new ReplyDto
             {
                 CreatedAt = DateTime.Now,
@@ -61,13 +54,15 @@ namespace EpicMedia.Web.Pages
                 Text = replyText,
                 User = UserId,
             };
+
+            newReply.Add(reply);
+
             var response = await _postService.PostCommentReplyAsync(reply);
             if (response.Success)
             {
                 replyText = "";
                 StateHasChanged();
             }
-            // Reset selected comment after posting reply
             selectedCommentId = null;
         }
 
