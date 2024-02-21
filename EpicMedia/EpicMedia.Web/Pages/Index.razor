@@ -66,7 +66,10 @@
                                 <i class="fa fa-comments-o" style="font-size:24px"></i><span class="m-2">@post.Comments.Count</span>
                             </div>
                         </div>
-
+                        <div class="mb-3 d-flex">
+                            <input type="text" @bind="@commentText" class="form-control w-100" placeholder="Add a comment...">
+                            <button type="button" @onclick="()=>PostComment(post.Id)" class="btn btn-success btn-sm w-25">Post</button>
+                        </div>
                         <div>
                             @if (IsAuthinticate)
                             {
@@ -119,10 +122,7 @@
                             }
                         </div>
                     </div>
-                    <div class="mb-3 d-flex">
-                        <input type="text" @bind="@commentText" class="form-control w-100" placeholder="Add a comment...">
-                        <button type="button" @onclick="()=>PostComment(post.Id)" class="btn btn-success btn-sm w-25">Post</button>
-                    </div>
+                    
                 </div>
             </div>
         </div>
