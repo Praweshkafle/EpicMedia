@@ -63,7 +63,7 @@
                         <div class="d-flex justify-content-between">
                             <div class="m-2 ">
                                 <i class="@GetLikeIcon(post.Id)" style="font-size:24px; margin-right:10px" @onclick="()=>ToggleLike(post)"></i><span>@post.Likes.Count</span>
-                                <i class="fa fa-comments-o" style="font-size:24px"></i>
+                                <i class="fa fa-comments-o" style="font-size:24px"></i><span class="m-2">@post.Comments.Count</span>
                             </div>
                         </div>
 
@@ -78,6 +78,7 @@
                                             <i class="fa fa-reply position-absolute top-0 end-0 mt-2 me-2" style="cursor: pointer;color:gray;" aria-hidden="true" @onclick="()=>ToggleReplySection(comment.Id)"></i>
                                         </div>
                                     </div>
+                                   
                                     @if (comment.Id.ToString() == selectedCommentId)
                                     {
                                         <div class="m-2 d-flex">
@@ -86,11 +87,33 @@
                                         </div>
                                     }
 
+                                    @foreach (var newrep in newReply.Where(a => a.ParentCommentId==comment.Id).ToList())
+                                    {
+                                        <div style="margin-left:20px">
+                                            <p><i class="d-inline m-1 fa fa-arrow-right"> </i><strong>@newrep.User:</strong>  @newrep.Text</p>
+                                        </div>
+                                    }
+
                                     @foreach (var reply in comment.Replies.ToList())
                                     {
                                         <div style="margin-left:20px">
                                             <p><i class="d-inline m-1 fa fa-arrow-right"> </i><strong>@reply.User:</strong>  @reply.Text</p>
                                         </div>
+                                    }
+                                }
+                                @if (newComments.Any())
+                                {
+                                    foreach (var item in newComments)
+                                    {
+                                        if (item.postId == post.Id)
+                                        {
+                                            <div>
+                                                <div class="d-inline position-relative ">
+                                                    <p><strong>@item.User:</strong>@item.Text</p>
+                                                    <i class="fa fa-reply position-absolute top-0 end-0 mt-2 me-2" style="cursor: pointer;color:gray;" aria-hidden="true" @onclick="()=>ToggleReplySection(item.Id)"></i>
+                                                </div>
+                                            </div>
+                                        }
                                     }
                                 }
                             }
