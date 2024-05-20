@@ -1,4 +1,6 @@
-﻿@page "/profile"
+﻿@page "/profile/656df75cb8736b4944500010"
+@inherits ProfileBase;
+
 <style>
     .db-social .jumbotron {
         margin: 0;
@@ -236,6 +238,91 @@
         </div>
     </div>
 </div>
-@code {
+@{
+    foreach (var post in Posts.Where(a => a.User == "656df75cb8736b4944500010"))
+    {
+        <div class="container post-container mt-1 mb-5">
+            <div class="row justify-content-center">
+                <div class="card col-md-6 p-3" style="background:#f1f1f1">
+                    <div class="post-header d-flex mb-2">
+                        <img src="https://placekitten.com/50/50" alt="User Avatar" class="user-avatar rounded-circle">
+                        <div style="margin-left:10px">
+                            <h6 class="mb-0">@post.User</h6>
+                            <small class="text-muted">Location</small>
+                        </div>
+                    </div>
+                    <p>@post.Content</p>
+                    <img src="@post.Image" alt="Post Image" class="post-image">
 
+                    <div class="post-footer">
+                        <div class="d-flex justify-content-between">
+                            <div class="m-2 ">
+                                <i class="@GetLikeIcon(post.Id)" style="font-size:24px; margin-right:10px" @onclick="()=>ToggleLike(post)"></i><span>@post.Likes.Count</span>
+                                <i class="fa fa-comments-o" style="font-size:24px"></i><span class="m-2">@post.Comments.Count</span>
+                            </div>
+                        </div>
+                        <div class="mb-3 d-flex">
+                            <input type="text" @bind="@commentText" class="form-control w-100" placeholder="Add a comment...">
+                            <button type="button" @onclick="()=>PostComment(post.Id)" class="btn btn-success btn-sm w-25">Post</button>
+                        </div>
+                        <div>
+                            @if (IsAuthinticate)
+                            {
+                                @foreach (var comment in post.Comments)
+                                {
+                                    <div>
+                                        <div class="d-inline position-relative ">
+                                            <p><strong>@comment.User:</strong>@comment.Text</p>
+                                            <i class="fa fa-reply position-absolute top-0 end-0 mt-2 me-2" style="cursor: pointer;color:gray;" aria-hidden="true" @onclick="()=>ToggleReplySection(comment.Id)"></i>
+                                        </div>
+                                    </div>
+
+                                    @if (comment.Id.ToString() == selectedCommentId)
+                                    {
+                                        <div class="m-2 d-flex">
+                                            <input type="text" @bind="@replyText" class="form-control w-100" placeholder="Add a reply...">
+                                            <button type="button" @onclick="()=> PostReply(post.Id, comment.Id.ToString())" class="btn btn-success btn-sm w-25">Post</button>
+                                        </div>
+                                    }
+
+                                    @foreach (var newrep in newReply.Where(a => a.ParentCommentId == comment.Id).ToList())
+                                    {
+                                        <div style="margin-left:20px">
+                                            <p><i class="d-inline m-1 fa fa-arrow-right"> </i><strong>@newrep.User:</strong>  @newrep.Text</p>
+                                        </div>
+                                    }
+
+                                    @foreach (var reply in comment.Replies.ToList())
+                                    {
+                                        <div style="margin-left:20px">
+                                            <p><i class="d-inline m-1 fa fa-arrow-right"> </i><strong>@reply.User:</strong>  @reply.Text</p>
+                                        </div>
+                                    }
+                                }
+                                @if (newComments.Any())
+                                {
+                                    foreach (var item in newComments)
+                                    {
+                                        if (item.postId == post.Id)
+                                        {
+                                            <div>
+                                                <div class="d-inline position-relative ">
+                                                    <p><strong>@item.User:</strong>@item.Text</p>
+                                                    <i class="fa fa-reply position-absolute top-0 end-0 mt-2 me-2" style="cursor: pointer;color:gray;" aria-hidden="true" @onclick="()=>ToggleReplySection(item.Id)"></i>
+                                                </div>
+                                            </div>
+                                        }
+                                    }
+                                }
+                            }
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    }
+}
+@code {
+    public string userId { get; set; }
 }
